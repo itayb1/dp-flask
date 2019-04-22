@@ -1,6 +1,6 @@
-from apiwrapper import dpAPI
+from dpAPI import DpAPI
 
-def create_action(type, fields, rule_name):
+def __create_action(type, fields, rule_name):
      if action["type"] == "validate":
         return create_validate_action(rule_name=rule_name, schema_url=fields["schema_url"], schema_type=fields["schema_type"])
     elif action["type"] == "xform":
@@ -13,11 +13,11 @@ def create_action(type, fields, rule_name):
         raise ApiError("Invalid action type", 400) 
 
 
-def create_rule_actions(rule_name, actions):
+def __create_rule_actions(rule_name, actions):
     try:
         rule_actions = []
         for action in actions:
-            dp_action = create_action(action["type"], action["parameters"], rule_name)
+            dp_action = __create_action(action["type"], action["parameters"], rule_name)
             rule_actions.append(dp_action["name"])
         return rule_actions
     except ApiError as e:
@@ -29,7 +29,7 @@ def create_style_policy(rules, mpgw_name):
         policy_maps = []
         for rule in rules:
             rule_name = rule["name"]
-            rule_actions = create_rule_actions(rule_name, rule["actions"])        
+            rule_actions = __create_rule_actions(rule_name, rule["actions"])        
             match_action = rule["match"]
             match_action = api.matching.create(name=match_action["name"],match_rules=match_action["match_rules"], combine_with_or=match_action["combine_with_or"], match_with_pcre=match_action["match_with_pcre"])
             policy_maps.append((match_action["name"], rule_name))

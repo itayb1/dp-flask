@@ -3,8 +3,7 @@
 from flask import Flask, request, Response, jsonify
 from flask_cors import CORS
 import json, ast
-from .utils import *
-
+from utils import create_style_policy
 
 app = Flask(__name__)
 api = dpAPI.DpAPI("https://0.0.0.0:5554/", ("admin", "admin"), "default")
