@@ -3,14 +3,13 @@
 from flask import Flask, request, Response, jsonify
 from flask_cors import CORS
 import json, ast
-from utils import create_style_policy
+from utils import create_style_policy, init_dpapi, exceptions
 
 app = Flask(__name__)
-api = dpAPI.DpAPI("https://0.0.0.0:5554/", ("admin", "admin"), "default")
 CORS(app)
 
 
-@app.errorhandler(ApiError)
+@app.errorhandler(exceptions.ApiError)
 def handler_error(error):
     message = {
             'status': error.status_code,
@@ -40,6 +39,7 @@ def hello():
 def create_mq_handler():
     try:
         data_dict, handlers = ast.literal_eval(request.data.decode()), []
+        api = init_dpapi(request.args)
         if isinstance(data_dict, list):
             for handler_obj in data_dict:
                 handler = api.mq_handler.create(handler_obj["name"], handler_obj["queue_manager"], handler_obj["get_queue"], handler_obj["state"]) 
@@ -48,30 +48,31 @@ def create_mq_handler():
             handler = api.mq_handler.create(data_dict["name"], data_dict["queue_manager"], data_dict["get_queue"], data_dict["state"])
             return success_response('MQ Handler "' + handler["name"] + '" was created')
         return success_response('MQ Handlers ' + str(handlers).strip('[]') + ' were created')
-    except ApiError as e:
-        raise ApiError(e.message, e.status_code)
+    except exceptions.ApiError as e:
+        raise exceptions.ApiError(e.message, e.status_code)
 
 
 @app.route("/api/http_handler/create", methods=['post'])
 def create_http_handler():
     try:
         data_dict = ast.literal_eval(request.data.decode())
+        api = init_dpapi(request.args)
         handler = api.http_handler.create(data_dict["name"], data_dict["local_address"], data_dict["local_port"], data_dict["state"], data_dict["allowed_features"])
         return success_response('HTTP Handler "' + handler["name"] + '" was created')
-    except ApiError as e:
-        raise ApiError(e.message, e.status_code)
+    except exceptions.ApiError as e:
+        raise exceptions.ApiError(e.message, e.status_code)
 
 
 @app.route("/api/mpgw/create", methods=['post'])
 def create_mpgw():
     try:
-        data_dict = ast.literal_eval(request.data.decode())
+        data_dict, api = ast.literal_eval(request.data.decode()), init_dpapi(request.args)
         mpgw_name = data_dict["mpgw_name"]
-        policy = create_style_policy(data_dict["rules"], mpgw_name)  
+        policy = create_style_policy(data_dict["rules"], mpgw_name, api=api)  
         api.mpgw.create(mpgw_name, front_handlers=data_dict["handlers"], xml_manager="default", style_policy=policy["name"], state="enabled")
         return success_response('mpgw "' + mpgw_name + '" was created')
-    except ApiError as e:
-        raise ApiError(e.message, e.status_code)
+    except exceptions.ApiError as e:
+        raise exceptions.ApiError(e.message, e.status_code)
 
    
 if __name__ == "__main__":

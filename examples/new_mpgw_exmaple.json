@@ -1,13 +1,15 @@
 {
-    "mpgw_name": "Test_MPGW4",
+    "mpgw_name": "Test_MPGW47",
     "rules": [
         {
-            "name": "Test_MPGW4_test_rule",
+            "name": "Test_MPGW47_test_rule",
             "direction": "request-rule",
             "actions": [
                 {
                     "type": "validate",
                     "parameters": {
+                        "input": "INPUT",
+                        "output": "NULL",
                         "schema_url": "store:///AAAInfo.xsd",
                         "schema_type": "xml"
                     }
@@ -15,6 +17,19 @@
                 {
                     "type": "xform",
                     "parameters": {
+                        "input": "INPUT",
+                        "output": "NULL",
+                        "stylesheet_path": "store:///soap-mediation.xsl",
+                        "stylesheet_parameters": {
+                            "to": "http://google.com"
+                        }
+                    }
+                },
+                {
+                    "type": "xform",
+                    "parameters": {
+                        "input": "INPUT",
+                        "output": "OUTPUT",
                         "stylesheet_path": "store:///soap-mediation.xsl",
                         "stylesheet_parameters": {
                             "to": "http://google.com"
@@ -24,12 +39,13 @@
                 {
                     "type": "results",
                     "parameters": {
-                        "input": "INPUT"
+                        "input": "INPUT",
+                        "output": "NULL"
                     }
                 }
             ],
             "match": {
-                "name": "test_match_5",
+                "name": "test_match_57",
                 "match_rules": [
                     {
                         "Type": "url",
@@ -47,12 +63,14 @@
             }
         },
         {
-            "name": "Test_MPGW4_test_rule_2",
+            "name": "Test_MPGW47_test_rule_2",
             "direction": "request-rule",
             "actions": [
                 {
                     "type": "validate",
                     "parameters": {
+                        "input": "INPUT",
+                        "output": "NULL",
                         "schema_url": "store:///AAAInfo.xsd",
                         "schema_type": "xml"
                     }
@@ -60,6 +78,8 @@
                 {
                     "type": "xform",
                     "parameters": {
+                        "input": "INPUT",
+                        "output": "NULL",
                         "stylesheet_path": "store:///soap-mediation.xsl",
                         "stylesheet_parameters": {
                             "to": "http://google.com"
@@ -74,7 +94,7 @@
                 }
             ],
             "match": {
-                "name": "test_match_8",
+                "name": "test_match_87",
                 "match_rules": [
                     {
                         "Type": "url",
