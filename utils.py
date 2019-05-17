@@ -1,5 +1,10 @@
 from dpAPI import DpAPI, exceptions
+from copy import deepcopy
 
+def append_handlers(current_handlers, new_handlers):
+    handlers = deepcopy(current_handlers)
+    [handlers.append({ "value": handler }) for handler in new_handlers]
+    return handlers
 
 def init_dpapi(query_string):
     dp = query_string.get("dp") + "/"
@@ -32,6 +37,23 @@ def __create_rule_actions(rule_name, actions, api):
             rule_actions.append(dp_action["name"])
             uids[action["type"]] += 1
         return rule_actions
+    except exceptions.ApiError as e:
+        raise exceptions.ApiError(e.message, e.status_code)
+
+
+def update_policy(rules, policy, api):
+    try:
+        policy_maps = deepcopy(policy["PolicyMaps"])
+        if isinstance(policy_maps, dict):
+            policy_maps = [policy_maps]
+
+        for rule in rules:
+            rule_actions = __create_rule_actions(rule["name"], rule["actions"], api)        
+            match_action = rule["match"]
+            api.matching.create(name=match_action["name"],match_rules=match_action["match_rules"], combine_with_or=match_action["combine_with_or"], match_with_pcre=match_action["match_with_pcre"])
+            policy_maps.append({ "Match": { "value": match_action["name"] }, "Rule": { "value": rule["name"] } })
+            api.rule.create(rule["name"], direction=rule["direction"], actions=rule_actions)
+        api.style_policy.update(policy, PolicyMaps=policy_maps)
     except exceptions.ApiError as e:
         raise exceptions.ApiError(e.message, e.status_code)
 
