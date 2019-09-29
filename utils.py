@@ -7,11 +7,12 @@ def append_handlers(current_handlers, new_handlers):
     return handlers
 
 def init_dpapi(query_string):
-    dp = query_string.get("dp") + "/"
+    host = query_string.get("host")
+    port = query_string.get("port")
     username = query_string.get("username")
     password = query_string.get("password")
     domain = query_string.get("domain")
-    return DpAPI(base_url=dp, auth=(username, password), domain=domain)
+    return DpAPI(base_url="https://{}:{}/".format(host, port), auth=(username, password), domain=domain)
 
 
 def __create_action(action_type, fields, rule_name, uid, api):
