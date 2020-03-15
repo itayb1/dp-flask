@@ -1,10 +1,29 @@
 from dpAPI import DpAPI, exceptions
 from copy import deepcopy
+from flask import jsonify
+from .action_creator import create_action_based_on_type
 
-def append_handlers(current_handlers, new_handlers):
-    handlers = deepcopy(current_handlers)
-    [handlers.append({ "value": handler }) for handler in new_handlers]
-    return handlers
+
+def __create_action(action_type, action_json, rule_name, uid, api):
+    try:
+        return create_action_based_on_type(api, action_type, action_json, rule_name, uid)
+    except exceptions.ApiError as e:
+        raise exceptions.ApiError(e.message, e.status_code)
+
+
+def __create_rule_actions(rule_name, actions, api):
+    try:
+        rule_actions, uids = [], {}
+        for action in actions:
+            if uids.get(action["type"]) == None:
+                uids[action["type"]] = 0
+            dp_action = __create_action(action["type"], action, rule_name, uids[action["type"]], api=api)
+            rule_actions.append(dp_action["name"])
+            uids[action["type"]] += 1
+        return rule_actions
+    except exceptions.ApiError as e:
+        raise exceptions.ApiError(e.message, e.status_code)
+
 
 def init_dpapi(query_string):
     host = query_string.get("host")
@@ -15,31 +34,10 @@ def init_dpapi(query_string):
     return DpAPI(base_url="https://{}:{}/".format(host, port), auth=(username, password), domain=domain)
 
 
-def __create_action(action_type, fields, rule_name, uid, api):
-    if action_type == "validate":
-        return api.action.create_validate_action(rule_name=rule_name, schema_url=fields["schema_url"], schema_type=fields["schema_type"], uid=uid, Input=fields["input"], Output=fields["output"])
-    elif action_type == "xform":
-        return api.action.create_transform_action(rule_name=rule_name, stylesheet_path=fields["stylesheet_path"], stylesheet_parameters=fields.get("stylesheet_parameters"), uid=uid, Input=fields["input"], Output=fields["output"])
-    elif action_type == "gatewayscript":
-        return api.action.create_gateway_script_action(rule_name=rule_name, gateway_script_path=fields["gateway_script_path"], uid=uid, Input=fields["input"], Output=fields["output"])
-    elif action_type == "results":
-        return api.action.create_results_action(rule_name=rule_name, uid=uid, Input=fields["input"])
-    else:
-        raise exceptions.ApiError("Invalid action type", 400) 
-
-
-def __create_rule_actions(rule_name, actions, api):
-    try:
-        rule_actions, uids = [], {}
-        for action in actions:
-            if uids.get(action["type"]) == None:
-                uids[action["type"]] = 0
-            dp_action = __create_action(action["type"], action["parameters"], rule_name, uids[action["type"]], api=api)
-            rule_actions.append(dp_action["name"])
-            uids[action["type"]] += 1
-        return rule_actions
-    except exceptions.ApiError as e:
-        raise exceptions.ApiError(e.message, e.status_code)
+def append_handlers(current_handlers, new_handlers):
+    handlers = deepcopy(current_handlers)
+    [handlers.append({ "value": handler }) for handler in new_handlers]
+    return handlers
 
 
 def update_policy(rules, policy, api):
