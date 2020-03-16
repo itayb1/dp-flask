@@ -1,6 +1,7 @@
 from flask import Blueprint, request, Response
 from utils import init_dpapi, exceptions
 from utils.response_utils import success_response, handle_error
+from utils.validations import validate_mq_handler
 
 mq_handler_api = Blueprint('mq_handler_api', __name__)
 mq_handler_api.register_error_handler(exceptions.ApiError, handle_error)
@@ -9,8 +10,12 @@ mq_handler_api.register_error_handler(exceptions.ApiError, handle_error)
 @mq_handler_api.route("/api/mq_handler", methods=['post'])
 def create_mq_handler():
     try:
-        json_data, handlers, api = request.get_json(
-            force=True), [], init_dpapi(request.args)
+        errors = validate_mq_handler(request)
+        if errors is not None:
+            raise exceptions.ApiError(errors, 400)
+        json_data = request.get_json(force=True)
+        handlers = []
+        api = init_dpapi(request.args)
         if isinstance(json_data, list):
             for handler_obj in json_data:
                 handler = api.mq_handler.create(
@@ -43,4 +48,3 @@ def get_mq_handler(name):
         return success_response(mq_handler)
     except exceptions.ApiError as e:
         raise exceptions.ApiError(e.message, e.status_code)
-
