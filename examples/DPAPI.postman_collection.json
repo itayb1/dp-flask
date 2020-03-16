@@ -1,0 +1,307 @@
+{
+	"info": {
+		"_postman_id": "4d7dc519-a887-4acf-82c2-b7453f6c620b",
+		"name": "DPAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Handlers",
+			"item": [
+				{
+					"name": "MQ Handler",
+					"item": [
+						{
+							"name": "Create MQ Handler",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"test_mq_handler\",\n\t\"queue_manager\": \"test_qm_grp\",\n\t\"get_queue\": \"test\",\n\t\"state\": \"enabled\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:4000/api/mq_handler?host=127.0.0.1&port=5554&username=admin&password=admin&domain=Sandbox",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"mq_handler"
+									],
+									"query": [
+										{
+											"key": "host",
+											"value": "127.0.0.1"
+										},
+										{
+											"key": "port",
+											"value": "5554"
+										},
+										{
+											"key": "username",
+											"value": "admin"
+										},
+										{
+											"key": "password",
+											"value": "admin"
+										},
+										{
+											"key": "domain",
+											"value": "Sandbox"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Retrieve MQ Handler",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:4000/api/mq_handler/test_mq_handler?host=127.0.0.1&port=5554&username=admin&password=admin&domain=Sandbox",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"mq_handler",
+										"test_mq_handler"
+									],
+									"query": [
+										{
+											"key": "host",
+											"value": "127.0.0.1"
+										},
+										{
+											"key": "port",
+											"value": "5554"
+										},
+										{
+											"key": "username",
+											"value": "admin"
+										},
+										{
+											"key": "password",
+											"value": "admin"
+										},
+										{
+											"key": "domain",
+											"value": "Sandbox"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All MQ Handlers",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:4000/api/mq_handler?host=127.0.0.1&port=5554&username=admin&password=admin&domain=Sandbox",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"mq_handler"
+									],
+									"query": [
+										{
+											"key": "host",
+											"value": "127.0.0.1"
+										},
+										{
+											"key": "port",
+											"value": "5554"
+										},
+										{
+											"key": "username",
+											"value": "admin"
+										},
+										{
+											"key": "password",
+											"value": "admin"
+										},
+										{
+											"key": "domain",
+											"value": "Sandbox"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "HTTP Handler",
+					"item": [
+						{
+							"name": "Create HTTP Handler",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"test_fsh1\",\n\t\"local_address\": \"127.0.0.1\",\n\t\"local_port\": \"7012\",\n\t\"state\": \"enabled\",\n\t\"allowed_features\": [\"GET\", \"POST\", \"PUT\"]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:4000/api/http_handler?host=127.0.0.1&port=5554&username=admin&password=admin&domain=Sandbox",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"http_handler"
+									],
+									"query": [
+										{
+											"key": "host",
+											"value": "127.0.0.1"
+										},
+										{
+											"key": "port",
+											"value": "5554"
+										},
+										{
+											"key": "username",
+											"value": "admin"
+										},
+										{
+											"key": "password",
+											"value": "admin"
+										},
+										{
+											"key": "domain",
+											"value": "Sandbox"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Retrieve HTTP Handler",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:4000/api/http_handler/test_fs1?host=127.0.0.1&port=5554&username=admin&password=admin&domain=Sandbox",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"http_handler",
+										"test_fs1"
+									],
+									"query": [
+										{
+											"key": "host",
+											"value": "127.0.0.1"
+										},
+										{
+											"key": "port",
+											"value": "5554"
+										},
+										{
+											"key": "username",
+											"value": "admin"
+										},
+										{
+											"key": "password",
+											"value": "admin"
+										},
+										{
+											"key": "domain",
+											"value": "Sandbox"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All HTTP Handlers",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:4000/api/http_handler?host=127.0.0.1&port=5554&username=admin&password=admin&domain=Sandbox",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"http_handler"
+									],
+									"query": [
+										{
+											"key": "host",
+											"value": "127.0.0.1"
+										},
+										{
+											"key": "port",
+											"value": "5554"
+										},
+										{
+											"key": "username",
+											"value": "admin"
+										},
+										{
+											"key": "password",
+											"value": "admin"
+										},
+										{
+											"key": "domain",
+											"value": "Sandbox"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "MPGW",
+			"item": [],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
