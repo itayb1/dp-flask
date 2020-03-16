@@ -9,7 +9,8 @@ mpgw_api.register_error_handler(exceptions.ApiError, handle_error)
 @mpgw_api.route("/api/mpgw", methods=['post'])
 def create_mpgw():
     try:
-        json_data, api = request.get_json(force=True), init_dpapi(request.args)
+        json_data = request.get_json(force=True)
+        api = init_dpapi(request.args)
         mpgw_name = json_data["mpgw_name"]
         policy = create_style_policy(json_data["rules"], mpgw_name, api=api)
         api.mpgw.create(mpgw_name, front_handlers=json_data["handlers"],

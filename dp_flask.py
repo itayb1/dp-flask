@@ -2,13 +2,14 @@
 
 from flask import Flask
 from flask_cors import CORS
-from views import mpgw_api, handlers_api
+from views import mpgw_api, http_handler_api, mq_handler_api
 
 app = Flask(__name__)
 CORS(app)
 
 app.register_blueprint(mpgw_api)
-app.register_blueprint(handlers_api)
+app.register_blueprint(mq_handler_api)
+app.register_blueprint(http_handler_api)
 
 
 @app.route("/", methods=['GET', 'POST'])
