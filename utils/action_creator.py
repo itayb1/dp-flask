@@ -1,11 +1,13 @@
 from dpAPI import exceptions
-    
+
+
 def create_action_based_on_type(api, action_type, action_json, rule_name, uid):
-    action_funcs = {"validate": __create_validate_action, "xform": __create_xform_action, "gatewayscript": __create_gatewayscript_action, "results": __create_results_action}
+    action_funcs = {"validate": __create_validate_action, "xform": __create_xform_action,
+                    "gatewayscript": __create_gatewayscript_action, "results": __create_results_action}
     if action_type in action_funcs.keys():
         return action_funcs[action_type](api, action_json, rule_name, uid)
     else:
-        raise exceptions.ApiError("Invalid action type", 400) 
+        raise exceptions.ApiError("Invalid action type", 400)
 
 
 def __create_validate_action(api, action_json, rule_name, uid):
