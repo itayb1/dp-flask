@@ -1,6 +1,6 @@
 from flask_inputs import Inputs
 from flask_inputs.validators import JsonSchema
-
+from utils import exceptions
 
 mq_handler_schema = {
     "anyOf": [
@@ -136,6 +136,20 @@ http_handler_schema = {
         }
     ]
 }
+
+
+def validate_handlers_exists(api, handlers):
+    for handler in handlers:
+        try:
+            http_handler = api.http_handler.get(handler)
+        except Exception as e:
+            try:
+                mq_handler = api.mq_handler.get(handler)
+            except Exception as e:
+                if e.status_code == 404:
+                    raise exceptions.ApiError(
+                        "One of the provided handlers doesn't exist.", 400)
+    return None
 
 
 class MQHandlerInputs(Inputs):

@@ -1,0 +1,72 @@
+{
+    "mpgw_name": "Test_MPGW_10",
+    "rules": [
+        {
+            "name": "Test_MPGW_10_test_rule",
+            "direction": "request-rule",
+            "actions": [
+                {
+                    "type": "validate",
+                    "parameters": {
+                        "Input": "INPUT",
+                        "Output": "NULL",
+                        "SchemaURL": "store:///AAAInfo.xsd"
+                    }
+                },
+                {
+                    "type": "xform",
+                    "parameters": {
+                        "Input": "INPUT",
+                        "Output": "NULL",
+                        "Transform": "store:///soap-mediation.xsl",
+                        "StylesheetParameters": [
+                            {
+                                "ParameterName": "{http://www.datapower.com/param/config}to",
+                                "ParameterValue": "http://google.com"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "type": "xform",
+                    "parameters": {
+                        "Input": "INPUT",
+                        "Output": "OUTPUT",
+                        "Transform": "store:///soap-mediation.xsl",
+                        "StylesheetParameters": [
+                            {
+                                "ParameterName": "{http://www.datapower.com/param/config}to",
+                                "ParameterValue": "http://google.com"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "type": "results",
+                    "parameters": {
+                        "Input": "INPUT",
+                        "Output": "NULL"
+                    }
+                }
+            ],
+            "match": {
+                "name": "Test_MPGW_10_Match",
+                "MatchRules": {
+                    "Type": "url",
+                    "HttpTag": "",
+                    "HttpValue": "",
+                    "Url": "*",
+                    "ErrorCode": "",
+                    "XPATHExpression": "",
+                    "Method": "default",
+                    "CustomMethod": ""
+                },
+                "MatchWithPCRE": "off",
+                "CombineWithOr": "off"
+            }
+        }
+    ],
+    "handlers": [
+        "test_fs1"
+    ]
+}
