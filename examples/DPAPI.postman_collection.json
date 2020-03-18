@@ -161,7 +161,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"name\": \"test_fsh3\",\n\t\"local_address\": \"127.0.0.1\",\n\n\t\"state\": \"enabled\",\n\t\"allowed_features\": [\"GET\", \"POST\", \"PUT\"]\n}",
+									"raw": "{\n\t\"name\": \"test_fsh1\",\n\t\"local_address\": \"127.0.0.1\",\n\t\"local_port\": \"7012\",\n\t\"state\": \"enabled\",\n\t\"allowed_features\": [\"GET\", \"POST\", \"PUT\"]\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -307,13 +307,149 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"mpgw_name\": \"Test_MPGW_22\",\n    \"rules\": [\n        {\n            \"name\": \"Test_MPGW_22_test_rule\",\n            \"direction\": \"request-rule\",\n            \"actions\": [\n                {\n                    \"type\": \"validate\",\n                    \"parameters\": {\n                        \"input\": \"INPUT\",\n                        \"output\": \"NULL\",\n                        \"schema_url\": \"store:///AAAInfo.xsd\",\n                        \"schema_type\": \"xml\"\n                    }\n                },\n                {\n                    \"type\": \"xform\",\n                    \"parameters\": {\n                        \"input\": \"INPUT\",\n                        \"output\": \"NULL\",\n                        \"stylesheet_path\": \"store:///soap-mediation.xsl\",\n                        \"stylesheet_parameters\": {\n                            \"to\": \"http://google.com\"\n                        }\n                    }\n                },\n                {\n                    \"type\": \"xform\",\n                    \"parameters\": {\n                        \"input\": \"INPUT\",\n                        \"output\": \"OUTPUT\",\n                        \"stylesheet_path\": \"store:///soap-mediation.xsl\",\n                        \"stylesheet_parameters\": {\n                            \"to\": \"http://google.com\"\n                        }\n                    }\n                },\n                {\n                    \"type\": \"results\",\n                    \"parameters\": {\n                        \"input\": \"INPUT\",\n                        \"output\": \"NULL\"\n                    }\n                }\n            ],\n            \"match\": {\n                \"name\": \"Test_MPGW_22_Match\",\n                \"match_rules\": [\n                    {\n                        \"Type\": \"url\",\n                        \"HttpTag\": \"\",\n                        \"HttpValue\": \"\",\n                        \"Url\": \"*\",\n                        \"ErrorCode\": \"\",\n                        \"XPATHExpression\": \"\",\n                        \"Method\": \"default\",\n                        \"CustomMethod\": \"\"\n                    }\n                ],\n                \"match_with_pcre\": \"off\",\n                \"combine_with_or\": \"off\"\n            }\n        }\n    ],\n    \"handlers\": [\n        \"test_fs1\",\n        \"test_mq_handler2\",\n        \"test_fs1\"\n    ]\n}",
+							"raw": "{\n    \"name\": \"Test_MPGW_37\",\n    \"rules\": [\n        {\n            \"name\": \"Test_MPGW_37_test_rule\",\n            \"direction\": \"request-rule\",\n            \"actions\": [\n                {\n                    \"Type\": \"validate\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"NULL\",\n                    \"SchemaURL\": \"store:///AAAInfo.xsd\"\n                },\n                {\n                    \"Type\": \"xform\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"NULL\",\n                    \"Transform\": \"store:///soap-mediation.xsl\",\n                    \"StylesheetParameters\": [\n                        {\n                            \"ParameterName\": \"{http://www.datapower.com/param/config}to\",\n                            \"ParameterValue\": \"http://google.com\"\n                        }\n                    ]\n                },\n                {\n                    \"Type\": \"xform\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"OUTPUT\",\n                    \"Transform\": \"store:///soap-mediation.xsl\",\n                    \"StylesheetParameters\": [\n                        {\n                            \"ParameterName\": \"{http://www.datapower.com/param/config}to\",\n                            \"ParameterValue\": \"http://google.com\"\n                        }\n                    ]\n                },\n                {\n                    \"Type\": \"results\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"NULL\"\n                }\n            ],\n            \"match\": {\n                \"MatchRules\": {\n                    \"Type\": \"url\",\n                    \"HttpTag\": \"\",\n                    \"HttpValue\": \"\",\n                    \"Url\": \"*\",\n                    \"ErrorCode\": \"\",\n                    \"XPATHExpression\": \"\",\n                    \"Method\": \"default\",\n                    \"CustomMethod\": \"\"\n                },\n                \"MatchWithPCRE\": \"off\",\n                \"CombineWithOr\": \"off\"\n            }\n        }\n    ],\n    \"handlers\": [\n        \"test_fs1\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
+						"url": {
+							"raw": "http://localhost:4000/api/mpgw?host=127.0.0.1&port=5554&username=admin&password=admin&domain=Sandbox",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"mpgw"
+							],
+							"query": [
+								{
+									"key": "host",
+									"value": "127.0.0.1"
+								},
+								{
+									"key": "port",
+									"value": "5554"
+								},
+								{
+									"key": "username",
+									"value": "admin"
+								},
+								{
+									"key": "password",
+									"value": "admin"
+								},
+								{
+									"key": "domain",
+									"value": "Sandbox"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update MPGW",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test_MPGW_30\",\n    \"rules\": [\n        {\n            \"name\": \"Test_MPGW_30_test_rule5\",\n            \"direction\": \"request-rule\",\n            \"actions\": [\n                {\n                    \"Type\": \"validate\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"NULL\",\n                    \"SchemaURL\": \"store:///AAAInfo.xsd\"\n                },\n                {\n                    \"Type\": \"xform\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"NULL\",\n                    \"Transform\": \"store:///soap-mediation.xsl\",\n                    \"StylesheetParameters\": [\n                        {\n                            \"ParameterName\": \"{http://www.datapower.com/param/config}to\",\n                            \"ParameterValue\": \"http://google.com\"\n                        }\n                    ]\n                },\n                {\n                    \"Type\": \"xform\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"OUTPUT\",\n                    \"Transform\": \"store:///soap-mediation.xsl\",\n                    \"StylesheetParameters\": [\n                        {\n                            \"ParameterName\": \"{http://www.datapower.com/param/config}to\",\n                            \"ParameterValue\": \"http://google.com\"\n                        }\n                    ]\n                },\n                {\n                    \"Type\": \"results\",\n                    \"Input\": \"NULL\",\n                    \"Output\": \"NULL\"\n                }\n            ],\n            \"match\": {\n                \"name\": \"Test_MPGW_30_Match5\",\n                \"MatchRules\": [\n                    {\n                        \"Type\": \"url\",\n                        \"HttpTag\": \"\",\n                        \"HttpValue\": \"\",\n                        \"Url\": \":7055*\",\n                        \"ErrorCode\": \"\",\n                        \"XPATHExpression\": \"\",\n                        \"Method\": \"default\",\n                        \"CustomMethod\": \"\"\n                    },\n                    {\n                        \"Type\": \"url\",\n                        \"HttpTag\": \"\",\n                        \"HttpValue\": \"\",\n                        \"Url\": \":702*\",\n                        \"ErrorCode\": \"\",\n                        \"XPATHExpression\": \"\",\n                        \"Method\": \"default\",\n                        \"CustomMethod\": \"\"\n                    }\n                ],\n                \"MatchWithPCRE\": \"off\",\n                \"CombineWithOr\": \"on\"\n            }\n        },\n        {\n            \"name\": \"Test_MPGW_30_test_rule4\",\n            \"direction\": \"request-rule\",\n            \"actions\": [\n                {\n                    \"Type\": \"validate\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"NULL\",\n                    \"SchemaURL\": \"store:///AAAInfo.xsd\"\n                },\n                {\n                    \"Type\": \"xform\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"NULL\",\n                    \"Transform\": \"store:///soap-mediation.xsl\",\n                    \"StylesheetParameters\": [\n                        {\n                            \"ParameterName\": \"{http://www.datapower.com/param/config}to\",\n                            \"ParameterValue\": \"http://google.com\"\n                        }\n                    ]\n                },\n                {\n                    \"Type\": \"xform\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"OUTPUT\",\n                    \"Transform\": \"store:///soap-mediation.xsl\",\n                    \"StylesheetParameters\": [\n                        {\n                            \"ParameterName\": \"{http://www.datapower.com/param/config}to\",\n                            \"ParameterValue\": \"http://google.com\"\n                        }\n                    ]\n                },\n                {\n                    \"Type\": \"results\",\n                    \"Input\": \"NULL\",\n                    \"Output\": \"NULL\"\n                }\n            ],\n            \"match\": {\n                \"name\": \"Test_MPGW_30_Match4\",\n                \"MatchRules\": {\n                    \"Type\": \"url\",\n                    \"HttpTag\": \"\",\n                    \"HttpValue\": \"\",\n                    \"Url\": \":7042*\",\n                    \"ErrorCode\": \"\",\n                    \"XPATHExpression\": \"\",\n                    \"Method\": \"default\",\n                    \"CustomMethod\": \"\"\n                },\n                \"MatchWithPCRE\": \"off\",\n                \"CombineWithOr\": \"on\"\n            }\n        }\n    ],\n    \"handlers\": [\n        \"test_fs1\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:4000/api/mpgw?host=127.0.0.1&port=5554&username=admin&password=admin&domain=Sandbox",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"mpgw"
+							],
+							"query": [
+								{
+									"key": "host",
+									"value": "127.0.0.1"
+								},
+								{
+									"key": "port",
+									"value": "5554"
+								},
+								{
+									"key": "username",
+									"value": "admin"
+								},
+								{
+									"key": "password",
+									"value": "admin"
+								},
+								{
+									"key": "domain",
+									"value": "Sandbox"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve MPGW",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:4000/api/mpgw/Test_MPGW_10?host=127.0.0.1&port=5554&username=admin&password=admin&domain=Sandbox",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"mpgw",
+								"Test_MPGW_10"
+							],
+							"query": [
+								{
+									"key": "host",
+									"value": "127.0.0.1"
+								},
+								{
+									"key": "port",
+									"value": "5554"
+								},
+								{
+									"key": "username",
+									"value": "admin"
+								},
+								{
+									"key": "password",
+									"value": "admin"
+								},
+								{
+									"key": "domain",
+									"value": "Sandbox"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All MPGWs",
+					"request": {
+						"method": "GET",
+						"header": [],
 						"url": {
 							"raw": "http://localhost:4000/api/mpgw?host=127.0.0.1&port=5554&username=admin&password=admin&domain=Sandbox",
 							"protocol": "http",
