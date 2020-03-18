@@ -11,12 +11,11 @@ mpgw_api.register_error_handler(exceptions.ApiError, handle_error)
 def create_mpgw():
     try:
         api = init_dpapi(request.args)
-        json_data = request.get_json(force=True)
-        validate_handlers_exists(api, json_data["handlers"])
-        mpgw_name = json_data["name"]
-        policy = create_style_policy(json_data["rules"], mpgw_name, api=api)
-        api.mpgw.create(mpgw_name, front_handlers=json_data["handlers"],  xml_manager="default", style_policy=policy["name"], state="enabled")
-        return success_response('mpgw "' + mpgw_name + '" was created')
+        mpgw_req = request.get_json(force=True)
+        validate_handlers_exists(api, mpgw_req["handlers"])
+        policy = create_style_policy(mpgw_req["rules"], mpgw_req["name"], api=api)
+        api.mpgw.create(mpgw_req["name"], mpgw_req["handlers"], "default", policy["name"], state="enabled")
+        return success_response('mpgw "' + mpgw_req["name"] + '" was created')
     except exceptions.ApiError as e:
         raise exceptions.ApiError(e.message, e.status_code)
 
@@ -24,20 +23,20 @@ def create_mpgw():
 @mpgw_api.route("/api/mpgw", methods=['put'])
 def update_mpgw_policy():
     try:
-        json_data = request.get_json(force=True)
+        mpgw_req = request.get_json(force=True)
         api = init_dpapi(request.args)
-        mpgw_obj = api.mpgw.get(json_data["name"])
+        mpgw_obj = api.mpgw.get(mpgw_req["name"])
 
         # update policy
         policy_obj = api.style_policy.get(mpgw_obj["StylePolicy"]["value"])
-        update_policy(json_data["rules"], policy_obj, api=api)
+        update_policy(mpgw_req["rules"], policy_obj, api=api)
 
         # update handlers
-        if json_data.get("handlers"):
-            handlers = append_handlers(mpgw_obj["FrontProtocol"], json_data["handlers"])
+        if mpgw_req.get("handlers"):
+            handlers = append_handlers(mpgw_obj["FrontProtocol"], mpgw_req["handlers"])
             api.mpgw.update(mpgw_obj, FrontProtocol=handlers)
 
-        return success_response('mpgw "' + json_data["name"] + '" was updated')
+        return success_response('mpgw "' + mpgw_req["name"] + '" was updated')
     except exceptions.ApiError as e:
         raise exceptions.ApiError(e.message, e.status_code)
 
