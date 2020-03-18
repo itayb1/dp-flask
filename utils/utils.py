@@ -52,13 +52,12 @@ def create_style_policy(rules, mpgw_name, api):
             match_action = api.matching.create_from_dict(str(rule_name) + "_Match", fields=match_action)
             policy_maps.append((match_action["name"], rule_name))
             api.rule.create(rule_name, direction=rule["direction"], actions=rule_actions)
-        policy = api.style_policy.create(name="", policy_maps=policy_maps, mpgw=mpgw_name)
-        return policy
+        return api.style_policy.create(name="", policy_maps=policy_maps, mpgw=mpgw_name)
     except exceptions.ApiError as e:
         raise exceptions.ApiError(e.message, e.status_code)
 
 
-def update_policy(rules, policy, api):
+def update_style_policy(rules, policy, api):
     try:
         policy_maps = deepcopy(policy["PolicyMaps"])
         if isinstance(policy_maps, dict):
