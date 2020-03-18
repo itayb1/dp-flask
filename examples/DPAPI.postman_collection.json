@@ -18,7 +18,58 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"name\": \"test_mq_handler\",\n\t\"queue_manager\": \"test_qm_grp\",\n\t\"get_queue\": \"test\",\n\t\"state\": \"enabled\"\n}",
+									"raw": "{\n    \"AsyncPut\": \"off\",\n    \"BatchSize\": 0,\n    \"CodePage\": 0,\n    \"ConcurrentConnections\": 1,\n    \"GetMessageOptions\": 1,\n    \"GetQueue\": \"test\",\n    \"ParseProperties\": \"on\",\n    \"PollingInterval\": 30,\n    \"QueueManager\": {\n        \"value\": \"test_qm_grp\"\n    },\n    \"RetrieveBackoutSettings\": \"off\",\n    \"UseQMNameInURL\": \"off\",\n    \"mAdminState\": \"enabled\",\n    \"name\": \"test_mq_handler44\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:4000/api/mq_handler?host=127.0.0.1&port=5554&username=admin&password=admin&domain=Sandbox",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"mq_handler"
+									],
+									"query": [
+										{
+											"key": "host",
+											"value": "127.0.0.1"
+										},
+										{
+											"key": "port",
+											"value": "5554"
+										},
+										{
+											"key": "username",
+											"value": "admin"
+										},
+										{
+											"key": "password",
+											"value": "admin"
+										},
+										{
+											"key": "domain",
+											"value": "Sandbox"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update MQ Handler",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"AsyncPut\": \"off\",\n    \"BatchSize\": 0,\n    \"CodePage\": 0,\n    \"ConcurrentConnections\": 1,\n    \"GetMessageOptions\": 1,\n    \"GetQueue\": \"test\",\n    \"ParseProperties\": \"off\",\n    \"PollingInterval\": 30,\n    \"QueueManager\": {\n        \"value\": \"test_qm_grp\"\n    },\n    \"RetrieveBackoutSettings\": \"off\",\n    \"UseQMNameInURL\": \"off\",\n    \"mAdminState\": \"enabled\",\n    \"name\": \"test_mq_handler44\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -161,7 +212,58 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"name\": \"test_fsh1\",\n\t\"local_address\": \"127.0.0.1\",\n\t\"local_port\": \"7012\",\n\t\"state\": \"enabled\",\n\t\"allowed_features\": [\"GET\", \"POST\", \"PUT\"]\n}",
+									"raw": "{\n  \"AllowCompression\": \"off\",\n  \"AllowWebSocketUpgrade\": \"off\",\n  \"AllowedFeatures\": {\n    \"CONNECT\": \"off\",\n    \"CmdExe\": \"off\",\n    \"CustomMethods\": \"off\",\n    \"DELETE\": \"off\",\n    \"DotDot\": \"off\",\n    \"FragmentIdentifiers\": \"on\",\n    \"GET\": \"on\",\n    \"HEAD\": \"off\",\n    \"HTTP-1.0\": \"on\",\n    \"HTTP-1.1\": \"on\",\n    \"HTTP-2.0\": \"off\",\n    \"OPTIONS\": \"off\",\n    \"PATCH\": \"off\",\n    \"POST\": \"on\",\n    \"PUT\": \"on\",\n    \"QueryString\": \"on\",\n    \"TRACE\": \"off\"\n  },\n  \"ChunkedEncoding\": \"on\",\n  \"CredentialCharset\": \"protocol\",\n  \"HTTP2MaxFrameSize\": 16384,\n  \"HTTP2MaxStreams\": 100,\n  \"HTTP2StreamHeader\": \"off\",\n  \"HTTPVersion\": \"HTTP/1.1\",\n  \"LocalAddress\": \"127.0.0.1\",\n  \"LocalPort\": 7012,\n  \"MaxHdrCount\": 0,\n  \"MaxNameHdrLen\": 0,\n  \"MaxPersistentConnectionsReuse\": 0,\n  \"MaxQueryStringLen\": 0,\n  \"MaxTotalHdrLen\": 128000,\n  \"MaxURLLen\": 16384,\n  \"MaxValueHdrLen\": 0,\n  \"PersistentConnections\": \"on\",\n  \"WebSocketIdleTimeout\": 0,\n  \"mAdminState\": \"enabled\",\n  \"name\": \"test_fs2\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:4000/api/http_handler?host=127.0.0.1&port=5554&username=admin&password=admin&domain=Sandbox",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"http_handler"
+									],
+									"query": [
+										{
+											"key": "host",
+											"value": "127.0.0.1"
+										},
+										{
+											"key": "port",
+											"value": "5554"
+										},
+										{
+											"key": "username",
+											"value": "admin"
+										},
+										{
+											"key": "password",
+											"value": "admin"
+										},
+										{
+											"key": "domain",
+											"value": "Sandbox"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update HTTP Handler",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"AllowCompression\": \"off\",\n  \"AllowWebSocketUpgrade\": \"off\",\n  \"AllowedFeatures\": {\n    \"CONNECT\": \"off\",\n    \"CmdExe\": \"off\",\n    \"CustomMethods\": \"off\",\n    \"DELETE\": \"off\",\n    \"DotDot\": \"off\",\n    \"FragmentIdentifiers\": \"on\",\n    \"GET\": \"on\",\n    \"HEAD\": \"off\",\n    \"HTTP-1.0\": \"on\",\n    \"HTTP-1.1\": \"on\",\n    \"HTTP-2.0\": \"off\",\n    \"OPTIONS\": \"off\",\n    \"PATCH\": \"off\",\n    \"POST\": \"on\",\n    \"PUT\": \"on\",\n    \"QueryString\": \"on\",\n    \"TRACE\": \"off\"\n  },\n  \"ChunkedEncoding\": \"on\",\n  \"CredentialCharset\": \"protocol\",\n  \"HTTP2MaxFrameSize\": 16384,\n  \"HTTP2MaxStreams\": 100,\n  \"HTTP2StreamHeader\": \"off\",\n  \"HTTPVersion\": \"HTTP/1.1\",\n  \"LocalAddress\": \"127.0.0.1\",\n  \"LocalPort\": 7015,\n  \"MaxHdrCount\": 0,\n  \"MaxNameHdrLen\": 0,\n  \"MaxPersistentConnectionsReuse\": 0,\n  \"MaxQueryStringLen\": 0,\n  \"MaxTotalHdrLen\": 128000,\n  \"MaxURLLen\": 16384,\n  \"MaxValueHdrLen\": 0,\n  \"PersistentConnections\": \"on\",\n  \"WebSocketIdleTimeout\": 0,\n  \"mAdminState\": \"enabled\",\n  \"name\": \"test_fs2\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
