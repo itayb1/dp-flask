@@ -75,6 +75,15 @@ def update_style_policy(rules, policy, api):
         raise exceptions.ApiError(e.message, e.status_code)
 
 
+def create_xml_manager(mpgw_name, api):
+    try:
+        xml_manager_name = "{}_XMLManager".format(mpgw_name)
+        api.xml_manager.create(xml_manager_name, virtual_servers=[lbg["name"] for lbg in  api.lbg.get_all()])
+        return xml_manager_name
+    except exceptions.ApiError as e:
+        raise exceptions.ApiError(e.message, e.status_code)   
+
+
 def append_handlers(current_handlers, new_handlers):
     handlers = deepcopy(current_handlers)
     handlers = [handlers] if isinstance(handlers, dict) else handlers
