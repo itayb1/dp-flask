@@ -1,7 +1,6 @@
 from flask import Blueprint, request, Response, jsonify
 from utils import init_dpapi, exceptions
 from utils.response_utils import success_response, handle_error
-from utils.validations import validate_mq_handler
 
 status_api = Blueprint('status_api', __name__)
 status_api.register_error_handler(exceptions.ApiError, handle_error)

@@ -1,7 +1,7 @@
 from flask import Blueprint, request, Response, jsonify
 from utils import create_style_policy, init_dpapi, exceptions, update_style_policy, append_handlers, create_xml_manager
 from utils.response_utils import success_response, handle_error
-from utils.validations import validate_handlers_exists
+from utils.validations import validate_mpgw_request
 
 mpgw_api = Blueprint('mpgw_api', __name__)
 mpgw_api.register_error_handler(exceptions.ApiError, handle_error)
@@ -12,7 +12,7 @@ def create_mpgw():
     try:
         api = init_dpapi(request.args)
         mpgw_req = request.get_json(force=True)
-        validate_handlers_exists(api, mpgw_req["handlers"])
+        validate_mpgw_request(api, mpgw_req)
         xml_manager_name = create_xml_manager(mpgw_req["name"], api)
         policy = create_style_policy(mpgw_req["rules"], mpgw_req["name"], api=api)
         api.mpgw.create(mpgw_req["name"], mpgw_req["handlers"], xml_manager_name, policy["name"], state="enabled")
