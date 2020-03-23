@@ -409,7 +409,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Test_MPGW_37\",\n    \"rules\": [\n        {\n            \"name\": \"Test_MPGW_37_test_rule\",\n            \"direction\": \"request-rule\",\n            \"actions\": [\n                {\n                    \"Type\": \"validate\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"NULL\",\n                    \"SchemaURL\": \"store:///AAAInfo.xsd\"\n                },\n                {\n                    \"Type\": \"xform\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"NULL\",\n                    \"Transform\": \"store:///soap-mediation.xsl\",\n                    \"StylesheetParameters\": [\n                        {\n                            \"ParameterName\": \"{http://www.datapower.com/param/config}to\",\n                            \"ParameterValue\": \"http://google.com\"\n                        }\n                    ]\n                },\n                {\n                    \"Type\": \"xform\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"OUTPUT\",\n                    \"Transform\": \"store:///soap-mediation.xsl\",\n                    \"StylesheetParameters\": [\n                        {\n                            \"ParameterName\": \"{http://www.datapower.com/param/config}to\",\n                            \"ParameterValue\": \"http://google.com\"\n                        }\n                    ]\n                },\n                {\n                    \"Type\": \"results\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"NULL\"\n                }\n            ],\n            \"match\": {\n                \"MatchRules\": {\n                    \"Type\": \"url\",\n                    \"HttpTag\": \"\",\n                    \"HttpValue\": \"\",\n                    \"Url\": \"*\",\n                    \"ErrorCode\": \"\",\n                    \"XPATHExpression\": \"\",\n                    \"Method\": \"default\",\n                    \"CustomMethod\": \"\"\n                },\n                \"MatchWithPCRE\": \"off\",\n                \"CombineWithOr\": \"off\"\n            }\n        }\n    ],\n    \"handlers\": [\n        \"test_fs1\"\n    ]\n}",
+							"raw": "{\n    \"name\": \"Test_MPGW15154\",\n    \"rules\": [\n        {\n            \"name\": \"Test_MPGW15154_test_rule\",\n            \"direction\": \"request-rule\",\n            \"actions\": [\n                {\n                    \"Type\": \"gatewayscript\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"dpvar1\",\n                    \"GatewayScriptLocation\": \"local:///NonXMlReader.js\"\n                },\n                {\n                    \"Type\": \"validate\",\n                    \"Input\": \"dpvar1\",\n                    \"Output\": \"NULL\",\n                    \"SchemaURL\": \"local:///AAAInfo.xsd\"\n                },\n                {\n                    \"Type\": \"xform\",\n                    \"Input\": \"NULL\",\n                    \"Output\": \"NULL\",\n                    \"Transform\": \"local:///RouteUriV2.xsl\",\n                    \"StylesheetParameters\": [\n                        {\n                            \"ParameterName\": \"Destination\",\n                            \"ParameterValue\": \"http://google.com\"\n                        }\n                    ]\n                },\n                {\n                    \"Type\": \"xform\",\n                    \"Input\": \"NULL\",\n                    \"Output\": \"NULL\",\n                    \"Transform\": \"local:///JsonLOG.xsl\"\n                },\n                {\n                    \"Type\": \"results\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"NULL\"\n                }\n            ],\n            \"match\": {\n                \"MatchRules\": [\n                    {\n                        \"Type\": \"fullyqualifiedurl\",\n                        \"HttpTag\": \"\",\n                        \"HttpValue\": \"\",\n                        \"Url\": \"http://0.0.0.0:7120*\",\n                        \"ErrorCode\": \"\",\n                        \"XPATHExpression\": \"\",\n                        \"Method\": \"default\",\n                        \"CustomMethod\": \"\"\n                    }\n                ],\n                \"MatchWithPCRE\": \"off\",\n                \"CombineWithOr\": \"off\"\n            }\n        },\n        {\n            \"name\": \"Test_MPGW15154_error_rule\",\n            \"direction\": \"error-rule\",\n            \"actions\": [\n                {\n                    \"Type\": \"xform\",\n                    \"Input\": \"NULL\",\n                    \"Output\": \"NULL\",\n                    \"Transform\": \"local:///WhenNetworkError.xsl\"\n                },\n                {\n                    \"Type\": \"results\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"NULL\"\n                }\n            ],\n            \"match\": {\n                \"MatchRules\": [\n                    {\n                        \"Type\": \"fullyqualifiedurl\",\n                        \"HttpTag\": \"\",\n                        \"HttpValue\": \"\",\n                        \"Url\": \"*\",\n                        \"ErrorCode\": \"\",\n                        \"XPATHExpression\": \"\",\n                        \"Method\": \"PUT\",\n                        \"CustomMethod\": \"\"\n                    }\n                ],\n                \"MatchWithPCRE\": \"off\",\n                \"CombineWithOr\": \"off\"\n            }\n        }\n    ],\n    \"handlers\": [\n        \"test_fs1\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -562,6 +562,163 @@
 							"path": [
 								"api",
 								"mpgw"
+							],
+							"query": [
+								{
+									"key": "host",
+									"value": "127.0.0.1"
+								},
+								{
+									"key": "port",
+									"value": "5554"
+								},
+								{
+									"key": "username",
+									"value": "admin"
+								},
+								{
+									"key": "password",
+									"value": "admin"
+								},
+								{
+									"key": "domain",
+									"value": "Sandbox"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Status",
+			"item": [
+				{
+					"name": "Is Port Free",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:4000/api/status/port/7011?host=127.0.0.1&port=5554&username=admin&password=admin&domain=Sandbox",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"status",
+								"port",
+								"7011"
+							],
+							"query": [
+								{
+									"key": "host",
+									"value": "127.0.0.1"
+								},
+								{
+									"key": "port",
+									"value": "5554"
+								},
+								{
+									"key": "username",
+									"value": "admin"
+								},
+								{
+									"key": "password",
+									"value": "admin"
+								},
+								{
+									"key": "domain",
+									"value": "Sandbox"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Free Port",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:4000/api/status/port?host=127.0.0.1&port=5554&username=admin&password=admin&domain=Sandbox",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"status",
+								"port"
+							],
+							"query": [
+								{
+									"key": "host",
+									"value": "127.0.0.1"
+								},
+								{
+									"key": "port",
+									"value": "5554"
+								},
+								{
+									"key": "username",
+									"value": "admin"
+								},
+								{
+									"key": "password",
+									"value": "admin"
+								},
+								{
+									"key": "domain",
+									"value": "Sandbox"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Misc",
+			"item": [
+				{
+					"name": "Upload File to Schemas Repo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "filename",
+								"value": "test25.json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"test\": \"test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:4000/api/misc/uploadfile?host=127.0.0.1&port=5554&username=admin&password=admin&domain=Sandbox",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"misc",
+								"uploadfile"
 							],
 							"query": [
 								{
