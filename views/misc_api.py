@@ -11,26 +11,28 @@ misc_api.register_error_handler(exceptions.ApiError, handle_error)
 def upload_file_to_gitlab_repo():
     try:
         filename = request.headers.get("filename")
-        gl = gitlab.Gitlab('https://gitlab.com', private_token=gitlab_private_token)
-        gl.auth()
-        schemas_project = gl.projects.get(gitlab_project_id)
-        branch_name = "uploading_" + filename
-        branch = schemas_project.branches.create({'branch': branch_name, 'ref': 'master'})
-        commit_data = {
-            'branch': branch_name,
-            'commit_message': 'uploading ' + filename,
-            'actions': [
-                {
-                    'action': 'create',
-                    'file_path': filename,
-                    'content': request.data
-                }
-            ]
-        }
-        commit = schemas_project.commits.create(commit_data)
-        mr = schemas_project.mergerequests.create({'source_branch': branch_name, 'target_branch': 'master', 'title': 'Merging {} to master'.format(branch_name)})
-        mr.merge()
-        return success_response("File uploaded successfully")
+        if filename:
+            gl = gitlab.Gitlab('https://gitlab.com', private_token=gitlab_private_token)
+            gl.auth()
+            schemas_project = gl.projects.get(gitlab_project_id)
+            branch_name = "uploading_" + filename
+            branch = schemas_project.branches.create({'branch': branch_name, 'ref': 'master'})
+            commit_data = {
+                'branch': branch_name,
+                'commit_message': 'uploading ' + filename,
+                'actions': [
+                    {
+                        'action': 'create',
+                        'file_path': filename,
+                        'content': request.data
+                    }
+                ]
+            }
+            commit = schemas_project.commits.create(commit_data)
+            mr = schemas_project.mergerequests.create({'source_branch': branch_name, 'target_branch': 'master', 'title': 'Merging {} to master'.format(branch_name)})
+            mr.merge()
+            return success_response("File uploaded successfully")
+        return (jsonify({"message": "no filename header was provided"}), 400)
     except Exception as e:
         return (jsonify(e.response_body), e.response_code)
 
