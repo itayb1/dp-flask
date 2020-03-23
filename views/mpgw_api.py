@@ -94,3 +94,13 @@ def get_mpgw(name):
         }
     except exceptions.ApiError as e:
         raise exceptions.ApiError(e.message, e.status_code)
+
+
+@mpgw_api.route("/api/mpgw/check/<string:name>", methods=['get'])
+def is_mpgw_exist(name):
+    try:
+        api = init_dpapi(request.args)
+        mpgw = api.mpgw.get(name)
+        return (jsonify({"message": "MultiProtocolGateway {} exists".format(name), "status": 409}), 409)
+    except exceptions.ApiError as e:
+        raise exceptions.ApiError(e.message, e.status_code)
