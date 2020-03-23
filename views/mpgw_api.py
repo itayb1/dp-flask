@@ -1,5 +1,5 @@
 from flask import Blueprint, request, Response, jsonify
-from utils import create_style_policy, init_dpapi, exceptions, update_style_policy, append_handlers
+from utils import create_style_policy, init_dpapi, exceptions, update_style_policy, append_handlers, create_xml_manager
 from utils.response_utils import success_response, handle_error
 from utils.validations import validate_handlers_exists
 
@@ -13,8 +13,9 @@ def create_mpgw():
         api = init_dpapi(request.args)
         mpgw_req = request.get_json(force=True)
         validate_handlers_exists(api, mpgw_req["handlers"])
+        xml_manager_name = create_xml_manager(mpgw_req["name"], api)
         policy = create_style_policy(mpgw_req["rules"], mpgw_req["name"], api=api)
-        api.mpgw.create(mpgw_req["name"], mpgw_req["handlers"], "default", policy["name"], state="enabled")
+        api.mpgw.create(mpgw_req["name"], mpgw_req["handlers"], xml_manager_name, policy["name"], state="enabled")
         return success_response('MultiProtocolGateway "' + mpgw_req["name"] + '" was created')
     except exceptions.ApiError as e:
         raise exceptions.ApiError(e.message, e.status_code)
@@ -36,7 +37,7 @@ def update_mpgw_policy():
             handlers = append_handlers(mpgw_obj["FrontProtocol"], mpgw_req["handlers"])
             api.mpgw.update(mpgw_obj, FrontProtocol=handlers)
 
-        return success_response('mpgw "' + mpgw_req["name"] + '" was updated')
+        return success_response('MultiProtocolGateway "' + mpgw_req["name"] + '" was updated')
     except exceptions.ApiError as e:
         raise exceptions.ApiError(e.message, e.status_code)
 
@@ -50,7 +51,7 @@ def add_handlers():
         handlers = append_handlers(
             mpgw_obj["FrontProtocol"], json_data["handlers"])
         api.mpgw.update(mpgw_obj, FrontProtocol=handlers)
-        return success_response('mpgw "' + json_data["name"] + '" was updated')
+        return success_response('MultiProtocolGateway "' + json_data["name"] + '" was updated')
     except exceptions.ApiError as e:
         raise exceptions.ApiError(e.message, e.status_code)
     except Exception as e:
