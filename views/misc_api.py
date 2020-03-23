@@ -1,7 +1,7 @@
 from flask import Blueprint, request, Response, jsonify
 from utils import init_dpapi, exceptions
 from utils.response_utils import success_response, handle_error
-from secrets import gitlab_private_token, gitlab_project_id
+from config.secrets import gitlab_private_token, gitlab_project_id
 import gitlab
 
 misc_api = Blueprint('misc_api', __name__)
