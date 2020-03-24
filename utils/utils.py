@@ -84,6 +84,17 @@ def create_xml_manager(mpgw_name, api):
         raise exceptions.ApiError(e.message, e.status_code)   
 
 
+def create_lbg(lbg_req, api):
+    health = lbg_req["healtcheck"]
+    if health.get("type") == "Standard":
+        api.lbg.create(lbg_req["name"], lbg_req["algorithm"], lbg_req["members"], healthcheck_type="Standard", healthcheck_port=health.get(
+            "port"), healthcheck_uri=health.get("uri"), healthcheck_method=health.get("Method"))
+    elif health.get("type") == "TCPConnection":
+        api.lbg.create(lbg_req["name"], lbg_req["algorithm"], lbg_req["members"], healthcheck_type="TCPConnection", healthcheck_port=health.get("port"))
+    else:
+        raise exceptions.ApiError("Not a valid healthcheck type. Either TCPConnection or Standard", 400)
+
+
 def append_handlers(current_handlers, new_handlers):
     handlers = deepcopy(current_handlers)
     handlers = [handlers] if isinstance(handlers, dict) else handlers

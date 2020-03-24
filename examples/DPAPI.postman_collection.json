@@ -460,7 +460,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Test_MPGW_30\",\n    \"rules\": [\n        {\n            \"name\": \"Test_MPGW_30_test_rule5\",\n            \"direction\": \"request-rule\",\n            \"actions\": [\n                {\n                    \"Type\": \"validate\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"NULL\",\n                    \"SchemaURL\": \"store:///AAAInfo.xsd\"\n                },\n                {\n                    \"Type\": \"xform\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"NULL\",\n                    \"Transform\": \"store:///soap-mediation.xsl\",\n                    \"StylesheetParameters\": [\n                        {\n                            \"ParameterName\": \"{http://www.datapower.com/param/config}to\",\n                            \"ParameterValue\": \"http://google.com\"\n                        }\n                    ]\n                },\n                {\n                    \"Type\": \"xform\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"OUTPUT\",\n                    \"Transform\": \"store:///soap-mediation.xsl\",\n                    \"StylesheetParameters\": [\n                        {\n                            \"ParameterName\": \"{http://www.datapower.com/param/config}to\",\n                            \"ParameterValue\": \"http://google.com\"\n                        }\n                    ]\n                },\n                {\n                    \"Type\": \"results\",\n                    \"Input\": \"NULL\",\n                    \"Output\": \"NULL\"\n                }\n            ],\n            \"match\": {\n                \"name\": \"Test_MPGW_30_Match5\",\n                \"MatchRules\": [\n                    {\n                        \"Type\": \"url\",\n                        \"HttpTag\": \"\",\n                        \"HttpValue\": \"\",\n                        \"Url\": \":7055*\",\n                        \"ErrorCode\": \"\",\n                        \"XPATHExpression\": \"\",\n                        \"Method\": \"default\",\n                        \"CustomMethod\": \"\"\n                    },\n                    {\n                        \"Type\": \"url\",\n                        \"HttpTag\": \"\",\n                        \"HttpValue\": \"\",\n                        \"Url\": \":702*\",\n                        \"ErrorCode\": \"\",\n                        \"XPATHExpression\": \"\",\n                        \"Method\": \"default\",\n                        \"CustomMethod\": \"\"\n                    }\n                ],\n                \"MatchWithPCRE\": \"off\",\n                \"CombineWithOr\": \"on\"\n            }\n        },\n        {\n            \"name\": \"Test_MPGW_30_test_rule4\",\n            \"direction\": \"request-rule\",\n            \"actions\": [\n                {\n                    \"Type\": \"validate\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"NULL\",\n                    \"SchemaURL\": \"store:///AAAInfo.xsd\"\n                },\n                {\n                    \"Type\": \"xform\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"NULL\",\n                    \"Transform\": \"store:///soap-mediation.xsl\",\n                    \"StylesheetParameters\": [\n                        {\n                            \"ParameterName\": \"{http://www.datapower.com/param/config}to\",\n                            \"ParameterValue\": \"http://google.com\"\n                        }\n                    ]\n                },\n                {\n                    \"Type\": \"xform\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"OUTPUT\",\n                    \"Transform\": \"store:///soap-mediation.xsl\",\n                    \"StylesheetParameters\": [\n                        {\n                            \"ParameterName\": \"{http://www.datapower.com/param/config}to\",\n                            \"ParameterValue\": \"http://google.com\"\n                        }\n                    ]\n                },\n                {\n                    \"Type\": \"results\",\n                    \"Input\": \"NULL\",\n                    \"Output\": \"NULL\"\n                }\n            ],\n            \"match\": {\n                \"name\": \"Test_MPGW_30_Match4\",\n                \"MatchRules\": {\n                    \"Type\": \"url\",\n                    \"HttpTag\": \"\",\n                    \"HttpValue\": \"\",\n                    \"Url\": \":7042*\",\n                    \"ErrorCode\": \"\",\n                    \"XPATHExpression\": \"\",\n                    \"Method\": \"default\",\n                    \"CustomMethod\": \"\"\n                },\n                \"MatchWithPCRE\": \"off\",\n                \"CombineWithOr\": \"on\"\n            }\n        }\n    ],\n    \"handlers\": [\n        \"test_fs1\"\n    ]\n}",
+							"raw": "{\n    \"name\": \"Test_MPGW15154\",\n    \"rules\": [\n        {\n            \"name\": \"Test_MPGW15154_test_rule\",\n            \"direction\": \"request-rule\",\n            \"actions\": [\n                {\n                    \"Type\": \"gatewayscript\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"dpvar1\",\n                    \"GatewayScriptLocation\": \"local:///NonXMlReader.js\"\n                },\n                {\n                    \"Type\": \"validate\",\n                    \"Input\": \"dpvar1\",\n                    \"Output\": \"NULL\",\n                    \"SchemaURL\": \"local:///AAAInfo.xsd\"\n                },\n                {\n                    \"Type\": \"xform\",\n                    \"Input\": \"NULL\",\n                    \"Output\": \"NULL\",\n                    \"Transform\": \"local:///RouteUriV2.xsl\",\n                    \"StylesheetParameters\": [\n                        {\n                            \"ParameterName\": \"Destination\",\n                            \"ParameterValue\": \"http://google.com\"\n                        }\n                    ]\n                },\n                {\n                    \"Type\": \"xform\",\n                    \"Input\": \"NULL\",\n                    \"Output\": \"NULL\",\n                    \"Transform\": \"local:///JsonLOG.xsl\"\n                },\n                {\n                    \"Type\": \"results\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"NULL\"\n                }\n            ],\n            \"match\": {\n                \"MatchRules\": [\n                    {\n                        \"Type\": \"fullyqualifiedurl\",\n                        \"HttpTag\": \"\",\n                        \"HttpValue\": \"\",\n                        \"Url\": \"http://0.0.0.0:7120*\",\n                        \"ErrorCode\": \"\",\n                        \"XPATHExpression\": \"\",\n                        \"Method\": \"default\",\n                        \"CustomMethod\": \"\"\n                    }\n                ],\n                \"MatchWithPCRE\": \"off\",\n                \"CombineWithOr\": \"off\"\n            }\n        },\n        {\n            \"name\": \"Test_MPGW15154_error_rule\",\n            \"direction\": \"error-rule\",\n            \"actions\": [\n                {\n                    \"Type\": \"xform\",\n                    \"Input\": \"NULL\",\n                    \"Output\": \"NULL\",\n                    \"Transform\": \"local:///WhenNetworkError.xsl\"\n                },\n                {\n                    \"Type\": \"results\",\n                    \"Input\": \"INPUT\",\n                    \"Output\": \"NULL\"\n                }\n            ],\n            \"match\": {\n                \"MatchRules\": [\n                    {\n                        \"Type\": \"fullyqualifiedurl\",\n                        \"HttpTag\": \"\",\n                        \"HttpValue\": \"\",\n                        \"Url\": \"*\",\n                        \"ErrorCode\": \"\",\n                        \"XPATHExpression\": \"\",\n                        \"Method\": \"PUT\",\n                        \"CustomMethod\": \"\"\n                    }\n                ],\n                \"MatchWithPCRE\": \"off\",\n                \"CombineWithOr\": \"off\"\n            }\n        }\n    ],\n    \"handlers\": [\n        \"test_fs1\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -637,6 +637,114 @@
 			"protocolProfileBehavior": {}
 		},
 		{
+			"name": "Load Balancer Group",
+			"item": [
+				{
+					"name": "Create Load Balancer Group - TCP Connection",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"LoadBalncer2\",\n    \"algorithm\": \"round-robin\",\n    \"healtcheck\": {\n    \t\"type\": \"TCPConnection\",\n    \t\"port\": 9000\n    },\n    \"members\": [\n        {\n            \"Server\": \"127.0.0.1\",\n            \"Weight\": 1,\n            \"MappedPort\": 9000,\n            \"Activity\": \"\",\n            \"HealthPort\": \"\",\n            \"LBMemberState\": \"enabled\"\n        },\n        {\n            \"Server\": \"214.0.0.1\",\n            \"Weight\": 1,\n            \"MappedPort\": 9000,\n            \"Activity\": \"\",\n            \"HealthPort\": \"\",\n            \"LBMemberState\": \"enabled\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:4000/api/lbg?host=127.0.0.1&port=5554&username=admin&password=admin&domain=Sandbox",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"lbg"
+							],
+							"query": [
+								{
+									"key": "host",
+									"value": "127.0.0.1"
+								},
+								{
+									"key": "port",
+									"value": "5554"
+								},
+								{
+									"key": "username",
+									"value": "admin"
+								},
+								{
+									"key": "password",
+									"value": "admin"
+								},
+								{
+									"key": "domain",
+									"value": "Sandbox"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Load Balancer Group - Standard HTTP",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"LoadBalncer15154\",\n    \"algorithm\": \"round-robin\",\n    \"healtcheck\": {\n    \t\"type\": \"Standard\",\n    \t\"port\": 9000,\n    \t\"uri\": \"/\",\n    \t\"method\": \"GET\"\n    },\n    \"members\": [\n        {\n            \"Server\": \"127.0.0.1\",\n            \"Weight\": 1,\n            \"MappedPort\": 9000,\n            \"Activity\": \"\",\n            \"HealthPort\": \"\",\n            \"LBMemberState\": \"enabled\"\n        },\n        {\n            \"Server\": \"214.0.0.1\",\n            \"Weight\": 1,\n            \"MappedPort\": 9000,\n            \"Activity\": \"\",\n            \"HealthPort\": \"\",\n            \"LBMemberState\": \"enabled\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:4000/api/lbg?host=127.0.0.1&port=5554&username=admin&password=admin&domain=Sandbox",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"lbg"
+							],
+							"query": [
+								{
+									"key": "host",
+									"value": "127.0.0.1"
+								},
+								{
+									"key": "port",
+									"value": "5554"
+								},
+								{
+									"key": "username",
+									"value": "admin"
+								},
+								{
+									"key": "password",
+									"value": "admin"
+								},
+								{
+									"key": "domain",
+									"value": "Sandbox"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
 			"name": "Status",
 			"item": [
 				{
@@ -721,6 +829,51 @@
 									"key": "domain",
 									"value": "Sandbox"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cluster Data",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:4000/api/status/cluster/ZadokCluster/prod",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"status",
+								"cluster",
+								"ZadokCluster",
+								"prod"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Clusters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:4000/api/status/cluster/prod",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"api",
+								"status",
+								"cluster",
+								"prod"
 							]
 						}
 					},
