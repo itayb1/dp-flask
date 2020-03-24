@@ -4,6 +4,7 @@ from utils.response_utils import success_response, handle_error
 from utils.validations import validate_mq_handler
 from config.clusters import prod_clusters, test_clusters
 
+
 status_api = Blueprint('status_api', __name__)
 status_api.register_error_handler(exceptions.ApiError, handle_error)
 

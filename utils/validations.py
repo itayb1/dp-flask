@@ -2,141 +2,6 @@ from flask_inputs import Inputs
 from flask_inputs.validators import JsonSchema
 from utils import exceptions
 
-mq_handler_schema = {
-    "anyOf": [
-        {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string"
-                    },
-                    "queue_manager": {
-                        "type": "string"
-                    },
-                    "get_queue": {
-                        "type": "string"
-                    },
-                    "state": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "name",
-                    "queue_manager",
-                    "get_queue",
-                    "state"
-                ]
-            }
-        },
-        {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "queue_manager": {
-                    "type": "string"
-                },
-                "get_queue": {
-                    "type": "string"
-                },
-                "state": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name",
-                "queue_manager",
-                "get_queue",
-                "state"
-            ]
-        }
-    ]
-}
-
-http_handler_schema = {
-    "anyOf": [
-        {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string"
-                    },
-                    "local_address": {
-                        "type": "string",
-                        "format": "ipv4"
-                    },
-                    "local_port": {
-                        "type": "string",
-                        "pattern": "\d{4}"
-                    },
-                    "state": {
-                        "type": "string"
-                    },
-                    "allowed_features": {
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "examples": [
-                                "GET",
-                                "POST",
-                                "PUT"
-                            ]
-                        }
-                    }
-                },
-                "required": [
-                    "name",
-                    "local_address",
-                    "local_port",
-                    "state",
-                    "allowed_features",
-                ]
-            }
-        },
-        {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "local_address": {
-                    "type": "string"
-                },
-                "local_port": {
-                    "type": "string",
-                    "pattern": "^\d{4}$"
-                },
-                "state": {
-                    "type": "string"
-                },
-                "allowed_features": {
-                    "type": "array",
-                    "items": {
-                            "type": "string",
-                            "examples": [
-                                "GET",
-                                "POST",
-                                "PUT"
-                            ]
-                    }
-                }
-            },
-            "required": [
-                "name",
-                "local_address",
-                "local_port",
-                "state",
-                "allowed_features",
-            ]
-        }
-    ]
-}
-
 
 def validate_handlers_exists(api, handlers):
     for handler in handlers:
@@ -149,28 +14,35 @@ def validate_handlers_exists(api, handlers):
                 if e.status_code == 404:
                     raise exceptions.ApiError(
                         "One of the provided handlers doesn't exist.", 400)
-    return None
+    return True
 
 
-class MQHandlerInputs(Inputs):
-    json = [JsonSchema(schema=mq_handler_schema)]
+def is_policy_rules_exist(api, rules):
+    for rule in rules:
+        try:
+            rule = api.rule.get(rule["name"])
+            if rule:
+                raise exceptions.ApiError(
+                    "One of the provided rules already exists exist.", 409)
+        except Exception as e:
+            if e.status_code == 409:
+                raise exceptions.ApiError(e.message, 409)
+    return True
 
 
-class HTTPHandlerInputs(Inputs):
-    json = [JsonSchema(schema=http_handler_schema)]
+def validate_mpgw_name_is_free(api, name):
+    try:
+        mpgw = api.mpgw.get(name)
+        if mpgw:
+            raise exceptions.ApiError(
+                "MultiProtoclGateway name is already taken", 409)
+    except Exception as e:
+        if e.status_code == 409:
+            raise exceptions.ApiError(e.message, 409)
+    return True
 
 
-def validate_mq_handler(request):
-    inputs = MQHandlerInputs(request)
-    if inputs.validate():
-        return None
-    else:
-        return inputs.errors
-
-
-def validate_http_handler(request):
-    inputs = HTTPHandlerInputs(request)
-    if inputs.validate():
-        return None
-    else:
-        return inputs.errors
+def validate_mpgw_request(api, mpgw_reg):
+    validate_mpgw_name_is_free(api, mpgw_reg["name"])
+    validate_handlers_exists(api, mpgw_reg["handlers"])
+    is_policy_rules_exist(api, mpgw_reg["rules"])
