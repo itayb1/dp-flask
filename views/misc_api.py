@@ -24,7 +24,7 @@ def upload_file_to_gitlab_repo():
                     {
                         'action': 'create',
                         'file_path': filename,
-                        'content': request.data
+                        'content': request.get_data()
                     }
                 ]
             }
