@@ -17,6 +17,7 @@ def upload_file_to_gitlab_repo():
             schemas_project = gl.projects.get(gitlab_project_id)
             branch_name = "uploading_" + filename
             branch = schemas_project.branches.create({'branch': branch_name, 'ref': 'master'})
+            data = request.get_data().decode()
             commit_data = {
                 'branch': branch_name,
                 'commit_message': 'uploading ' + filename,
@@ -24,7 +25,7 @@ def upload_file_to_gitlab_repo():
                     {
                         'action': 'create',
                         'file_path': filename,
-                        'content': request.get_data()
+                        'content': data
                     }
                 ]
             }
