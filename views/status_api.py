@@ -2,7 +2,7 @@ from flask import Blueprint, request, Response, jsonify
 from utils import init_dpapi, exceptions
 from utils.response_utils import success_response, handle_error
 from config.clusters import prod_clusters, test_clusters
-
+from config.environments import environments
 
 status_api = Blueprint('status_api', __name__)
 status_api.register_error_handler(exceptions.ApiError, handle_error)
@@ -50,3 +50,16 @@ def get_cluster_names(cluster_type):
         return jsonify(list(test_clusters.keys()))
     else:
         raise exceptions.ApiError("Not a valid cluster type", 400)
+
+
+@status_api.route("/api/status/environments", methods=['get'])
+def get_environments():
+    return jsonify(environments)
+
+
+@status_api.route("/api/status/environments/<string:env>", methods=['get'])
+def get_environment_qms(env):
+    if env in environments.keys():
+        return jsonify(environments[env])
+    else:
+        raise exceptions.ApiError("Not a valid environment name", 400)
