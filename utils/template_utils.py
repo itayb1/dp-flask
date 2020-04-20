@@ -105,7 +105,7 @@ def populate_mpgw_template(req, api):
             if is_policy_rule_exists(api, [rule_obj]) != False:
                 #slm_action = create_slm_action(slm_action_template, rule, rule_obj["name"], api)
                 filter_action = None
-                if filter_action != "green":
+                if filter_type != "green":
                     filter_action = create_filter_action(filters_templates[filter_type], rule["filter"]["dpasFilter"], rule["filter"]["schemaPath"], filter_type)
                 destination_action = create_destination_action(destination_templates[dest_protocol], dest_address["primaryAddress"], dest_address["secondaryAddress"], dest_protocol)
                 match["MatchRules"] = create_match_rules(match_rule_template, src_address["primaryAddress"], src_address["secondaryAddress"], src_prorocol)
