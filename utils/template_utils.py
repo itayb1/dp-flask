@@ -83,7 +83,7 @@ def __create_rule_handlers(primary_address, secondary_address, protocol, methods
 
 def populate_mpgw_template(req, api):
     mpgw = deepcopy(mpgw_template)
-    mpgw["name"] = req["name"]
+    mpgw["name"] = req["details"]["projectNameValue"]
     if validate_mpgw_name_is_free(api, mpgw["name"]) != False:
         # Handling creation of mpgw policy rules
         for rule in req["rules"]:
