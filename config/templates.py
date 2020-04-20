@@ -5,12 +5,8 @@ rule_actions_template = [
         "Output": "dpvar1",
         "GatewayScriptLocation": "local:///NonXMlReader.js"
     },
-    {
-        "filter"
-    },
-    {
-        "destination"
-    },
+    "filter",
+    "destination",
     {
         "Type": "xform",
         "Input": "NULL",
@@ -25,6 +21,13 @@ rule_actions_template = [
 ]
 
 
+slm_action_template = {
+    "Type": "slm",
+    "Input": "INPUT",
+    "SLMPolicy": "SLM_Test_Policy",
+}
+
+
 destination_templates = {
     "http": {
         "Type": "xform",
@@ -34,7 +37,7 @@ destination_templates = {
         "StylesheetParameters": [
                 {
                     "ParameterName": "Destination",
-                    "ParameterValue": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+                    "ParameterValue": ""
                 }
         ]
     },
@@ -57,6 +60,7 @@ destination_templates = {
     }
 }
 
+
 filters_templates = {
     "schema":
         {
@@ -75,16 +79,18 @@ filters_templates = {
 
 }
 
+
 match_rule_template = {
     "Type": "fullyqualifiedurl",
     "HttpTag": "",
     "HttpValue": "",
-    "Url": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "Url": "",
     "ErrorCode": "",
     "XPATHExpression": "",
     "Method": "default",
     "CustomMethod": ""
 }
+
 
 match_template = {
     "MatchRules": [
