@@ -13,6 +13,8 @@ def create_filter_action(template, dpas_filter, schema_path, filter_type):
     filter_action = deepcopy(template)
     if filter_type == "schema":
         filter_action["SchemaURL"] = schema_path
+    elif filter_type == "green":
+        return None
 
     return filter_action
 
@@ -42,11 +44,9 @@ def create_slm_action(template, rule, rule_name, api):
 def create_match_rules(template, primary_address, secondary_address, protocol):
     match_rule = deepcopy(template)
     if protocol == "http":
-        match_rule["Url"] = "http://{ip}:{port}*".format(
-            ip=primary_address, port=secondary_address)
+        match_rule["Url"] = "http://{ip}:{port}*".format(ip=primary_address, port=secondary_address)
     elif protocol == "mq":
-        match_rule["Url"] = generate_mq_url_match(
-            primary_address, secondary_address)
+        match_rule["Url"] = generate_mq_url_match(primary_address, secondary_address)
 
     return match_rule
 
@@ -55,7 +55,12 @@ def create_rule_actions(template, filter_action, destination_action, slm_action)
     rule_actions = deepcopy(template)
     if slm_action != None:
         rule_actions.insert(0, slm_action)
+    if filter_action == None:
+        rule_actions.remove("filter")
+    
     np_array = np.array(rule_actions)
+
+
     np_array = np.where(np_array == "filter", filter_action, np_array)
     np_array = np.where(np_array == "destination",
                         destination_action, np_array)
@@ -98,12 +103,12 @@ def populate_mpgw_template(req, api):
 
             # if rule doesn't exist, create rule's actions, match and associated handlers
             if is_policy_rule_exists(api, [rule_obj]) != False:
-                slm_action = create_slm_action(slm_action_template, rule, rule_obj["name"], api)
+                #slm_action = create_slm_action(slm_action_template, rule, rule_obj["name"], api)
                 filter_action = create_filter_action(filters_templates[filter_type], rule["filter"]["dpasFilter"], rule["filter"]["schemaPath"], filter_type)
                 destination_action = create_destination_action(destination_templates[dest_protocol], dest_address["primaryAddress"], dest_address["secondaryAddress"], dest_protocol)
                 match["MatchRules"] = create_match_rules(match_rule_template, src_address["primaryAddress"], src_address["secondaryAddress"], src_prorocol)
                 rule_obj["match"] = match
-                rule_obj["actions"] = create_rule_actions(rule_actions_template, filter_action, destination_action, slm_action)
+                rule_obj["actions"] = create_rule_actions(rule_actions_template, filter_action, destination_action)#, slm_action)
                 mpgw["rules"].append(rule_obj)
                 mpgw["handlers"] += __create_rule_handlers(src_address["primaryAddress"], src_address["secondaryAddress"], src_prorocol, src_address["methods"], rule_obj["name"], api)
 
