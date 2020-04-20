@@ -51,10 +51,10 @@ def create_match_rules(template, primary_address, secondary_address, protocol):
     return match_rule
 
 
-def create_rule_actions(template, filter_action, destination_action, slm_action):
+def create_rule_actions(template, filter_action, destination_action): #, slm_action):
     rule_actions = deepcopy(template)
-    if slm_action != None:
-        rule_actions.insert(0, slm_action)
+    #if slm_action != None:
+    #    rule_actions.insert(0, slm_action)
     if filter_action == None:
         rule_actions.remove("filter")
     
