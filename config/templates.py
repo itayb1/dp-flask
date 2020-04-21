@@ -21,6 +21,16 @@ rule_actions_template = [
 ]
 
 
+slm_statement_template = {
+    "action": "throttle",
+    "interval": 1,
+    "intervalType": "moving",
+    "thresholdAlgorithm": "greater-than",
+    "thresholdType": "payload-total",
+    "thresholdLevel": "10"
+}
+
+
 slm_action_template = {
     "Type": "slm",
     "Input": "INPUT",

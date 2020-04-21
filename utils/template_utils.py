@@ -9,6 +9,13 @@ def generate_mq_url_match(queue_manager, get_queue):
     return "dpmq://{queue_manager}/{front_handler}\?RequestQueue={get_queue}".format(queue_manager=queue_manager, front_handler=get_queue+"_FSH*", get_queue=get_queue)
 
 
+def get_size_threshold_in_kb(file_size, unit):
+    if unit == "mb":
+        return file_size * 1000
+    file_size = file_size * 1000000 if unit == "gb" else file_size
+    return file_size
+
+
 def create_filter_action(template, dpas_filter, schema_path, filter_type):
     filter_action = deepcopy(template)
     if filter_type == "schema":
@@ -17,6 +24,20 @@ def create_filter_action(template, dpas_filter, schema_path, filter_type):
         return None
 
     return filter_action
+
+
+def create_slm_statements(template, slm_input):
+    slm_statement_size = deepcopy(slm_statement_template)
+    slm_statement_count = deepcopy(slm_statement_template)
+    slm_statement_size["interval"] = slm_input["fileSizeTimeUnit"]
+    slm_statement_size["thresholdType"] = "payload-total"
+    slm_statement_size["thresholdLevel"] = get_size_threshold_in_kb(slm_input["maxFileSize"], slm_input["fileSizeUnit"])
+
+    slm_statement_count["interval"] = slm_input["fileCountTimeUnit"]
+    slm_statement_count["thresholdType"] = "count-all"
+    slm_statement_count["thresholdLevel"] = slm_input["maxFileCount"]
+
+    return [slm_statement_size, slm_statement_count]
 
 
 def create_destination_action(template, primary_address, secondary_address, protocol):
@@ -32,10 +53,10 @@ def create_destination_action(template, primary_address, secondary_address, prot
 
 
 def create_slm_action(template, rule, rule_name, api):
-    if rule.get("slm") != None:
+    if not (None in rule.get("slm").values()):
         slm_action = deepcopy(template)
         slm_policy = api.slm.create("{rule_name}_SLM_policy".format(
-            rule_name=rule_name), rule["slm"]["statements"])
+            rule_name=rule_name), create_slm_statements(slm_statement_template ,rule["slm"]))
         slm_action["SLMPolicy"] = slm_policy["name"]
         return slm_action
     return None
@@ -51,10 +72,11 @@ def create_match_rules(template, primary_address, secondary_address, protocol):
     return match_rule
 
 
-def create_rule_actions(template, filter_action, destination_action): #, slm_action):
+
+def create_rule_actions(template, filter_action, destination_action, slm_action):
     rule_actions = deepcopy(template)
-    #if slm_action != None:
-    #    rule_actions.insert(0, slm_action)
+    if slm_action != None:
+        rule_actions.insert(0, slm_action)
     if filter_action == None:
         rule_actions.remove("filter")
     
@@ -103,14 +125,14 @@ def populate_mpgw_template(req, api):
 
             # if rule doesn't exist, create rule's actions, match and associated handlers
             if is_policy_rule_exists(api, [rule_obj]) != False:
-                #slm_action = create_slm_action(slm_action_template, rule, rule_obj["name"], api)
+                slm_action = create_slm_action(slm_action_template, rule, rule_obj["name"], api)
                 filter_action = None
                 if filter_type != "green":
                     filter_action = create_filter_action(filters_templates[filter_type], rule["filter"]["dpasFilter"], rule["filter"]["schemaPath"], filter_type)
                 destination_action = create_destination_action(destination_templates[dest_protocol], dest_address["primaryAddress"], dest_address["secondaryAddress"], dest_protocol)
                 match["MatchRules"] = create_match_rules(match_rule_template, src_address["primaryAddress"], src_address["secondaryAddress"], src_prorocol)
                 rule_obj["match"] = match
-                rule_obj["actions"] = create_rule_actions(rule_actions_template, filter_action, destination_action)#, slm_action)
+                rule_obj["actions"] = create_rule_actions(rule_actions_template, filter_action, destination_action, slm_action)
                 mpgw["rules"].append(rule_obj)
                 mpgw["handlers"] += __create_rule_handlers(src_address["primaryAddress"], src_address["secondaryAddress"], src_prorocol, src_address["methods"], rule_obj["name"], api)
 
