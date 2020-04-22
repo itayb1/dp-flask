@@ -3,6 +3,8 @@ from copy import deepcopy
 from config.environments import environments
 from utils.validations import *
 import numpy as np
+from jinja2 import Template
+import json, ast
 
 
 def generate_mq_url_match(queue_manager, get_queue):
@@ -20,43 +22,25 @@ def create_filter_action(template, dpas_filter, schema_path, filter_type):
     filter_action = deepcopy(template)
     if filter_type == "schema":
         filter_action["SchemaURL"] = schema_path
-    elif filter_type == "green":
-        return None
-
     return filter_action
 
 
-def create_slm_statements(template, slm_input):
-    slm_statement_size = deepcopy(slm_statement_template)
-    slm_statement_count = deepcopy(slm_statement_template)
-    slm_statement_size["interval"] = slm_input["fileSizeTimeUnit"]
-    slm_statement_size["thresholdType"] = "payload-total"
-    slm_statement_size["thresholdLevel"] = get_size_threshold_in_kb(slm_input["maxFileSize"], slm_input["fileSizeUnit"])
-
-    slm_statement_count["interval"] = slm_input["fileCountTimeUnit"]
-    slm_statement_count["thresholdType"] = "count-all"
-    slm_statement_count["thresholdLevel"] = slm_input["maxFileCount"]
-
+def create_slm_statements(template_var, slm_input):
+    template = Template(json.dumps(template_var))
+    slm_statement_size = json.loads(template.render(action="throttle", interval=slm_input["fileSizeTimeUnit"], intervalType="moving", thresholdAlgorithm="greater-than", thresholdType="payload-total", thresholdLevel=get_size_threshold_in_kb(slm_input["maxFileSize"], slm_input["fileSizeUnit"])))
+    slm_statement_count = json.loads(template.render(action="throttle", interval=slm_input["fileCountTimeUnit"], intervalType="moving", thresholdAlgorithm="greater-than", thresholdType="count-all", thresholdLevel=slm_input["maxFileCount"]))
     return [slm_statement_size, slm_statement_count]
 
 
-def create_destination_action(template, primary_address, secondary_address, protocol):
-    destination_action = deepcopy(template)
-    if protocol == "http":
-        destination_action["StylesheetParameters"][0]["ParameterValue"] = "http://{ip}:{port}".format(
-            ip=primary_address, port=secondary_address)
-    elif protocol == "mq":
-        destination_action["StylesheetParameters"][0]["ParameterValue"] = primary_address
-        destination_action["StylesheetParameters"][1]["ParameterValue"] = secondary_address
-
-    return destination_action
+def create_destination_action(template_var, primary_address, secondary_address):
+    template = Template(json.dumps(template_var))
+    return json.loads(template.render(primaryAddress=primary_address, secondaryAddress=secondary_address))
 
 
 def create_slm_action(template, rule, rule_name, api):
     if not (None in rule.get("slm").values()):
         slm_action = deepcopy(template)
-        slm_policy = api.slm.create("{rule_name}_SLM_policy".format(
-            rule_name=rule_name), create_slm_statements(slm_statement_template ,rule["slm"]))
+        slm_policy = api.slm.create("{rule_name}_SLM_policy".format(rule_name=rule_name), create_slm_statements(slm_statement_template ,rule["slm"]))
         slm_action["SLMPolicy"] = slm_policy["name"]
         return slm_action
     return None
@@ -73,39 +57,24 @@ def create_match_rules(template, primary_address, secondary_address, protocol):
 
 
 
-def create_rule_actions(template, filter_action, destination_action, slm_action):
-    rule_actions = deepcopy(template)
-    if slm_action != None:
-        rule_actions.insert(0, slm_action)
-    if filter_action == None:
-        rule_actions.remove("filter")
-    
-    np_array = np.array(rule_actions)
-
-
-    np_array = np.where(np_array == "filter", filter_action, np_array)
-    np_array = np.where(np_array == "destination",
-                        destination_action, np_array)
-    return list(np_array)
+def create_rule_actions(template_var, filter_action, destination_action, slm_action=None):
+    template = Template(json.dumps(template_var))
+    rule_actions = json.loads(template.render(slm=slm_action, filter=filter_action, destination=destination_action))
+    return [ast.literal_eval(str(action)) for action in rule_actions if action != "None"]
 
 
 def __create_rule_handlers(primary_address, secondary_address, protocol, methods, rule_name, api):
-    handler = []
+    handlers = []
     if protocol == "http":
-        handler = api.http_handler.create("{rule_name}_HTTP_FSH".format(
-            rule_name=rule_name), primary_address, secondary_address, "enabled", methods)
+        handlers.append(api.http_handler.create("{rule_name}_HTTP_FSH".format(rule_name=rule_name), primary_address, secondary_address, "enabled", methods)["name"])
     elif protocol == "mq":
         if primary_address in environments.keys():
-            handlers = []
             for i, qm in enumerate(environments[primary_address]):
-                handler = api.mq_handler.create("{queue_name}_FSH_{id}".format(
-                    queue_name=secondary_address, id=(i+1)), qm, secondary_address, "enabled")
+                handler = api.mq_handler.create("{queue_name}_FSH_{id}".format(queue_name=secondary_address, id=(i+1)), qm, secondary_address, "enabled")
                 handlers.append(handler["name"])
-            return handlers
         else:
-            handler = api.mq_handler.create("{queue_name}_FSH".format(
-                queue_name=secondary_address), primary_address, secondary_address, "enabled")
-    return [handler["name"]]
+            handlers.append(api.mq_handler.create("{queue_name}_FSH".format(queue_name=secondary_address), primary_address, secondary_address, "enabled")["name"])
+    return handlers
 
 
 def populate_mpgw_template(req, api):
@@ -126,10 +95,8 @@ def populate_mpgw_template(req, api):
             # if rule doesn't exist, create rule's actions, match and associated handlers
             if is_policy_rule_exists(api, [rule_obj]) != False:
                 slm_action = create_slm_action(slm_action_template, rule, rule_obj["name"], api)
-                filter_action = None
-                if filter_type != "green":
-                    filter_action = create_filter_action(filters_templates[filter_type], rule["filter"]["dpasFilter"], rule["filter"]["schemaPath"], filter_type)
-                destination_action = create_destination_action(destination_templates[dest_protocol], dest_address["primaryAddress"], dest_address["secondaryAddress"], dest_protocol)
+                filter_action = create_filter_action(filters_templates[filter_type], rule["filter"]["dpasFilter"], rule["filter"]["schemaPath"], filter_type)
+                destination_action = create_destination_action(destination_templates[dest_protocol], dest_address["primaryAddress"], dest_address["secondaryAddress"])
                 match["MatchRules"] = create_match_rules(match_rule_template, src_address["primaryAddress"], src_address["secondaryAddress"], src_prorocol)
                 rule_obj["match"] = match
                 rule_obj["actions"] = create_rule_actions(rule_actions_template, filter_action, destination_action, slm_action)

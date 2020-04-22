@@ -1,12 +1,13 @@
 rule_actions_template = [
+    "{{ slm }}",
     {
         "Type": "gatewayscript",
         "Input": "INPUT",
         "Output": "dpvar1",
         "GatewayScriptLocation": "local:///NonXMlReader.js"
     },
-    "filter",
-    "destination",
+    "{{ filter  }}",
+    "{{ destination }}",
     {
         "Type": "xform",
         "Input": "NULL",
@@ -22,12 +23,12 @@ rule_actions_template = [
 
 
 slm_statement_template = {
-    "action": "throttle",
-    "interval": 1,
-    "intervalType": "moving",
-    "thresholdAlgorithm": "greater-than",
-    "thresholdType": "payload-total",
-    "thresholdLevel": "10"
+    "action": "{{ action }}",
+    "interval": "{{ interval|int }}",
+    "intervalType": "{{ intervalType }}",
+    "thresholdAlgorithm": "{{ thresholdAlgorithm }}",
+    "thresholdType": "{{ thresholdType }}",
+    "thresholdLevel": "{{ thresholdLevel|int }}"
 }
 
 
@@ -47,7 +48,7 @@ destination_templates = {
         "StylesheetParameters": [
                 {
                     "ParameterName": "Destination",
-                    "ParameterValue": ""
+                    "ParameterValue": "http://{{ primaryAddress }}:{{ secondaryAddress }}*"
                 }
         ]
     },
@@ -59,11 +60,11 @@ destination_templates = {
         "StylesheetParameters": [
             {
                 "ParameterName": "Environment",
-                "ParameterValue": "TEST_GRP"
+                "ParameterValue": "{{ primaryAddress }}"
             },
             {
                 "ParameterName": "Queue",
-                "ParameterValue": "TEST_QUEUE"
+                "ParameterValue": "{{ secondaryAddress }}"
             },
 
         ]
@@ -86,6 +87,7 @@ filters_templates = {
             "Output": "NULL",
             "SchemaURL": "local:///testSchhema.xsd"
         },
+    "green": None
 
 }
 
