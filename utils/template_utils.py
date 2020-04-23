@@ -56,7 +56,6 @@ def create_match_rules(template, primary_address, secondary_address, protocol):
     return match_rule
 
 
-
 def create_rule_actions(template_var, filter_action, destination_action, slm_action=None):
     template = Template(json.dumps(template_var))
     rule_actions = json.loads(template.render(slm=slm_action, filter=filter_action, destination=destination_action))
