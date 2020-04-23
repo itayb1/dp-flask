@@ -1,5 +1,5 @@
 from flask import Blueprint, request, Response, jsonify
-from utils import create_style_policy, init_dpapi, exceptions, update_style_policy, append_handlers, create_xml_manager
+from utils import create_style_policy, init_dpapi, exceptions, update_style_policy, append_handlers, create_xml_manager, get_cluster_creds, get_cluster_data, init_dpapi_from_cluster
 from utils.response_utils import success_response, handle_error
 from utils.validations import validate_mpgw_request
 
@@ -102,5 +102,20 @@ def is_mpgw_exist(name):
         api = init_dpapi(request.args)
         mpgw = api.mpgw.get(name)
         return (jsonify({"message": "MultiProtocolGateway {} exists".format(name), "status": 409}), 409)
+    except exceptions.ApiError as e:
+        raise exceptions.ApiError(e.message, e.status_code)
+
+
+@mpgw_api.route("/api/mpgw/<string:cluster_name>/<string:cluster_type>/check/<string:name>", methods=['get'])
+def is_mpgw_exist_in_cluster(cluster_name, cluster_type, name):
+    try:
+        cluster_creds = get_cluster_creds(cluster_name, cluster_type)
+        cluster_data = get_cluster_data(cluster_name, cluster_type)
+        if cluster_creds and cluster_data:
+            api = init_dpapi_from_cluster(cluster_data, cluster_creds)
+            mpgw = api.mpgw.get(name)
+            return (jsonify({"message": "MultiProtocolGateway {} exists".format(name), "status": 409}), 409)
+        else:
+            raise exceptions.ApiError("Not a valid cluster", 400)
     except exceptions.ApiError as e:
         raise exceptions.ApiError(e.message, e.status_code)

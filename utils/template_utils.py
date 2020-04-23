@@ -1,11 +1,15 @@
 from config.templates import *
 from copy import deepcopy
-from config.environments import environments
+from config.environments import prod_environments, test_environments
 from utils.validations import *
 import numpy as np
 from jinja2 import Template
 import json, ast
 
+
+def get_environments(cluster_name, cluster_type):
+    envs = prod_environments if cluster_type == "prod" else test_environments
+    return envs.get(cluster_name)
 
 def generate_mq_url_match(queue_manager, get_queue):
     return "dpmq://{queue_manager}/{front_handler}\?RequestQueue={get_queue}".format(queue_manager=queue_manager, front_handler=get_queue+"_FSH*", get_queue=get_queue)
@@ -62,13 +66,14 @@ def create_rule_actions(template_var, filter_action, destination_action, slm_act
     return [ast.literal_eval(str(action)) for action in rule_actions if action != "None"]
 
 
-def __create_rule_handlers(primary_address, secondary_address, protocol, methods, rule_name, api):
+def __create_rule_handlers(primary_address, secondary_address, protocol, methods, rule_name, api, cluster_name, cluster_type):
     handlers = []
     if protocol == "http":
         handlers.append(api.http_handler.create("{rule_name}_HTTP_FSH".format(rule_name=rule_name), primary_address, secondary_address, "enabled", methods)["name"])
     elif protocol == "mq":
-        if primary_address in environments.keys():
-            for i, qm in enumerate(environments[primary_address]):
+        envs = get_environments(cluster_name, cluster_type)
+        if primary_address in envs.keys():
+            for i, qm in enumerate(envs[primary_address]):
                 handler = api.mq_handler.create("{queue_name}_FSH_{id}".format(queue_name=secondary_address, id=(i+1)), qm, secondary_address, "enabled")
                 handlers.append(handler["name"])
         else:
@@ -79,6 +84,8 @@ def __create_rule_handlers(primary_address, secondary_address, protocol, methods
 def populate_mpgw_template(req, api):
     mpgw = deepcopy(mpgw_template)
     mpgw["name"] = req["details"]["projectNameValue"]
+    cluster_type = req["details"]["testOrProd"]
+    cluster_name = req["details"]["clusterName"]
     if validate_mpgw_name_is_free(api, mpgw["name"]) != False:
         # Handling creation of mpgw policy rules
         for rule in req["rules"]:
@@ -100,7 +107,7 @@ def populate_mpgw_template(req, api):
                 rule_obj["match"] = match
                 rule_obj["actions"] = create_rule_actions(rule_actions_template, filter_action, destination_action, slm_action)
                 mpgw["rules"].append(rule_obj)
-                mpgw["handlers"] += __create_rule_handlers(src_address["primaryAddress"], src_address["secondaryAddress"], src_prorocol, src_address["methods"], rule_obj["name"], api)
+                mpgw["handlers"] += __create_rule_handlers(src_address["primaryAddress"], src_address["secondaryAddress"], src_prorocol, src_address["methods"], rule_obj["name"], api, cluster_name, cluster_type)
 
         error_rule = deepcopy(error_rule_template)
         error_rule["name"] = mpgw["name"] + "_error_rule"
