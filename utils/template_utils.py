@@ -16,10 +16,8 @@ def generate_mq_url_match(queue_manager, get_queue):
 
 
 def get_size_threshold_in_kb(file_size, unit):
-    if unit == "mb":
-        return file_size * 1000
-    file_size = file_size * 1000000 if unit == "gb" else file_size
-    return file_size
+    mul = {"mb": 1000, "gb": 1000000, "kb": 1}
+    return file_size * mul[unit]
 
 
 def create_filter_action(template, dpas_filter, schema_path, filter_type):
