@@ -78,7 +78,7 @@ filters_templates = {
             "Type": "validate",
             "Input": "dpvar1",
             "Output": "NULL",
-            "SchemaURL": "local:///testSchhema.xsd"
+            "SchemaURL": "{{ schemaName }}"
         },
     "dpas":
         {

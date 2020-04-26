@@ -11,6 +11,7 @@ def get_environments(cluster_name, cluster_type):
     envs = prod_environments if cluster_type == "prod" else test_environments
     return envs.get(cluster_name)
 
+
 def generate_mq_url_match(queue_manager, get_queue):
     return "dpmq://{queue_manager}/{front_handler}\?RequestQueue={get_queue}".format(queue_manager=queue_manager, front_handler=get_queue+"_FSH*", get_queue=get_queue)
 
@@ -20,11 +21,13 @@ def get_size_threshold_in_kb(file_size, unit):
     return file_size * mul[unit]
 
 
-def create_filter_action(template, dpas_filter, schema_path, filter_type):
-    filter_action = deepcopy(template)
+def create_filter_action(template_var, dpas_filter, schema_path, filter_type):
+    template = Template(json.dumps(template_var))
     if filter_type == "schema":
-        filter_action["SchemaURL"] = schema_path
-    return filter_action
+        if schema_path.startswith("local:///"):
+            return json.loads(template.render(schemaName=schema_path))
+        else:
+            return json.loads(template.render(schemaName="local:///{}".format(schema_path)))
 
 
 def create_slm_statements(template_var, slm_input):
@@ -98,14 +101,14 @@ def populate_mpgw_template(req, api):
 
             # if rule doesn't exist, create rule's actions, match and associated handlers
             if is_policy_rule_exists(api, [rule_obj]) != False:
+                mpgw["handlers"] += __create_rule_handlers(src_address["primaryAddress"], src_address["secondaryAddress"], src_prorocol, src_address["methods"], rule_obj["name"], api, cluster_name, cluster_type)
                 slm_action = create_slm_action(slm_action_template, rule, rule_obj["name"], api)
                 filter_action = create_filter_action(filters_templates[filter_type], rule["filter"]["dpasFilter"], rule["filter"]["schemaPath"], filter_type)
                 destination_action = create_destination_action(destination_templates[dest_protocol], dest_address["primaryAddress"], dest_address["secondaryAddress"])
                 match["MatchRules"] = create_match_rules(match_rule_template, src_address["primaryAddress"], src_address["secondaryAddress"], src_prorocol)
                 rule_obj["match"] = match
                 rule_obj["actions"] = create_rule_actions(rule_actions_template, filter_action, destination_action, slm_action)
-                mpgw["rules"].append(rule_obj)
-                mpgw["handlers"] += __create_rule_handlers(src_address["primaryAddress"], src_address["secondaryAddress"], src_prorocol, src_address["methods"], rule_obj["name"], api, cluster_name, cluster_type)
+                mpgw["rules"].append(rule_obj)             
 
         error_rule = deepcopy(error_rule_template)
         error_rule["name"] = mpgw["name"] + "_error_rule"
