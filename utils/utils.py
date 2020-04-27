@@ -1,6 +1,32 @@
 from dpAPI import DpAPI, exceptions
 from copy import deepcopy
 from flask import jsonify
+from config.clusters import *
+from config.secrets import clusters_creds
+
+
+def get_cluster_data(cluster_name, cluster_type):
+    clusters = prod_clusters if cluster_type == "prod" else test_clusters
+    return clusters.get(cluster_name)
+
+
+def get_cluster_creds(cluster_name, cluster_type):
+    cluster_creds = clusters_creds.get(cluster_name)
+    if cluster_creds:
+        creds = cluster_creds.get(cluster_type)
+        return creds
+    return cluster_creds
+
+
+def init_dpapi_from_cluster(cluster_data, cluster_creds):
+    host = cluster_data["nodes"][0]["host"]
+    port = cluster_data["nodes"][0]["port"]
+    domain = cluster_data["domain"]
+    return DpAPI(base_url="https://{}:{}/".format(host, port), auth=cluster_creds, domain=domain)
+
+
+def init_dpapi_server(host, port, cluster_creds, domain):
+    return DpAPI(base_url="https://{}:{}/".format(host, port), auth=cluster_creds, domain=domain)
 
 
 def init_dpapi(query_string):

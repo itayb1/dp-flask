@@ -30,6 +30,18 @@ def is_policy_rules_exist(api, rules):
     return True
 
 
+def is_policy_rule_exists(api, rule_name):
+    try:
+        rule = api.rule.get(rule_name)
+        if rule:
+            raise exceptions.ApiError(
+                "One of the provided rules already exists exist.", 409)
+    except Exception as e:
+        if e.status_code == 409:
+            raise exceptions.ApiError(e.message, 409)
+    return True
+
+
 def validate_mpgw_name_is_free(api, name):
     try:
         mpgw = api.mpgw.get(name)
