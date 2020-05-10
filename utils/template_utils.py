@@ -84,9 +84,10 @@ def __create_rule_handlers(primary_address, secondary_address, protocol, methods
         handlers.append(api.http_handler.create("{rule_name}_HTTP_FSH".format(rule_name=rule_name), primary_address, secondary_address, "enabled", methods)["name"])
     elif protocol == "mq":
         envs = get_environments(cluster_name, cluster_type)
-        for i, qm in enumerate(envs[primary_address]):
-            handler = api.mq_handler.create("{queue_name}_FSH_{id}".format(queue_name=secondary_address, id=(i+1)), qm, secondary_address, "enabled")
-            handlers.append(handler["name"])
+        if envs.get(primary_address):
+            for i, qm in enumerate(envs[primary_address]):
+                handler = api.mq_handler.create("{queue_name}_FSH_{id}".format(queue_name=secondary_address, id=(i+1)), qm, secondary_address, "enabled")
+                handlers.append(handler["name"])
         else:
             handlers.append(api.mq_handler.create("{queue_name}_FSH".format(queue_name=secondary_address), primary_address, secondary_address, "enabled")["name"])
     return handlers
