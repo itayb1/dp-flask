@@ -75,10 +75,18 @@ destination_templates = {
 filters_templates = {
     "schema":
         {
-            "Type": "validate",
-            "Input": "dpvar1",
-            "Output": "NULL",
-            "SchemaURL": "{{ schemaName }}"
+            "xml": {
+                "Type": "validate",
+                "Input": "dpvar1",
+                "Output": "NULL",
+                "SchemaURL": "{{ schemaName }}"
+            },
+            "json": {
+                "Type": "validate",
+                "Input": "dpvar1",
+                "Output": "NULL",
+                "JSONSchemaURL": "{{ schemaName }}"
+            }
         },
     "dpas":
         {

@@ -30,9 +30,9 @@ def get_size_threshold_in_kb(file_size, unit):
     return file_size * mul[unit]
 
 
-def render_filter_action(template_var, dpas_filter, schema_path, filter_type):
-    template = Template(json.dumps(template_var[filter_type]))
+def render_filter_action(template_var, dpas_filter, schema_path, filter_type, schema_type):
     if filter_type == "schema":
+        template = Template(json.dumps(template_var["schema"][schema_type.lower()]))
         if schema_path.startswith("local:///"):
             return json.loads(template.render(schemaName=schema_path))
         else:
@@ -116,7 +116,7 @@ def populate_mpgw_template(req, api):
                 rules_names.append(rule_obj["name"])
                 mpgw["handlers"] += __create_rule_handlers(source.primaryAddress, source.secondaryAddress, source.protocol, source.methods, rule_obj["name"], api, details.clusterName, details.testOrProd)
                 slm_action = render_slm_action(slm_action_template, rule, rule_obj["name"], api)
-                filter_action = render_filter_action(filters_templates, rfilter.dpasFilter, rfilter.schemaPath, rfilter.filterType)
+                filter_action = render_filter_action(filters_templates, rfilter.dpasFilter, rfilter.schemaPath, rfilter.filterType, rfilter.schemaType)
                 destination_action = render_destination_action(destination_templates[dest.protocol], dest.primaryAddress, dest.secondaryAddress)
                 match["MatchRules"] = render_match_rules(match_rule_template, source.primaryAddress, source.secondaryAddress, source.protocol)
                 rule_obj["match"] = match
