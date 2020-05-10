@@ -41,7 +41,7 @@ def is_free_port_cluster(cluster_name, cluster_type, port):
 
 
 @status_api.route("/api/status/cluster/<string:name>/<string:cluster_type>", methods=['get'])
-def get_cluster_data(name, cluster_type):
+def get_cluster_data_handler(name, cluster_type):
     cluster = ""
     if cluster_type == "prod":
         cluster = prod_clusters.get(name)
@@ -53,7 +53,7 @@ def get_cluster_data(name, cluster_type):
     if cluster == None:
         raise exceptions.ApiError("Cluster not found", 404)
 
-    return cluster
+    return jsonify(cluster)
 
 
 @status_api.route("/api/status/cluster/<string:cluster_type>", methods=['get'])

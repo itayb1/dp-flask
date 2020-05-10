@@ -2,7 +2,7 @@
 
 from flask import Flask
 from flask_cors import CORS
-from views import mpgw_api, http_handler_api, mq_handler_api, status_api, misc_api, lbg_api, template_api, mqqm_api, filestore_api
+from blueprints import mpgw_api, http_handler_api, mq_handler_api, status_api, misc_api, lbg_api, template_api, mqqm_api, filestore_api
 
 app = Flask(__name__)
 CORS(app)
